@@ -1,0 +1,141 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+body {
+    background-color: #fa3e3e;
+}
+
+/* 
+    Header e Footer
+*/
+
+header {
+    background-color: #ff0000;
+    position: fixed;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header li {
+    margin: 0 10px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.ajuda a {
+    color: black;
+    text-decoration-line: underline;
+}
+
+.home {
+    padding-top: 10vh;
+    padding-bottom: 10vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    font-size: 20px;
+    color: #fff;
+}
+
+footer {
+    background-color: #ff0000;
+    position: fixed;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    font-size: 20px;
+}
+
+footer ul {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+footer li a {
+    color: rgb(0, 0, 0);
+    justify-content: space-around;
+    text-decoration-line: underline;
+}
+
+/* 
+    Transações
+*/
+.transacoes {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 8vh 8vw;
+    background-color: #ff0000;
+    border-radius: 15px;
+    margin-top: 5px;
+    gap: 20px;
+}
+
+.transacoes table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.transacoes th,
+.transacoes td {
+    text-align: center;
+    color: #fff;
+    padding: 15px 30px;
+    border-bottom: #fff solid 1px;
+}
+
+#mensagem-sem-transacoes {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* 
+    Gerar PDF
+*/
+.container-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0; /* espaço entre a tabela e o botão */
+}
+
+#btnGerarPDF {
+    background-color: #fa3e3e;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#btnGerarPDF:hover {
+    background-color: #ac5959c5;
+}
