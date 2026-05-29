@@ -1,52 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/chat.css">
-    <title>Banco digital - Chat</title>
+    <link rel="stylesheet" href="../css/shared.css">
+    <title>HCI Vitta | Chat</title>
 </head>
-
 <body>
     <header>
-        <ul class="info">
-            <li>*Tipo de conta*</li>
-            <li>*Agência e numeração*</li>
-        </ul>
-
-        <h1>Chat de atendimento</h1>
-        <ul class="ajuda">
-            <li><a href="index.html">Sobre</a></li>
-            <li><a href="contato.html">Contato</a></li>
-        </ul>
+        <div class="header-left">
+            <a class="brand-link" href="index.html">
+                <img class="brand-logo" src="../../imagens/logo.jpeg" alt="HCI Vitta logo" />
+                <div class="brand-meta">
+                    <span class="brand-name">HCI Vitta</span>
+                    <span class="brand-slogan">Atendimento 24h</span>
+                </div>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="contact.html">Contato</a>
+        </nav>
     </header>
 
-    <div class="home">
-        <div class="atendente">
-            <h2>Olá, sou a AI</h2>
-            <p>Seja bem vindo!</p>
-        </div>
+    <main class="page-content">
+        <section class="page-title">
+            <p class="eyebrow">Chat</p>
+            <h1>Converse com nosso atendimento digital</h1>
+            <p>Use o chat para esclarecer dúvidas, solicitar ajuda com serviços bancários ou falar sobre seu saldo.</p>
+        </section>
 
-        <div id="chat-container" class="chat">
-        </div>
-
-        <div id="chatForm">
-            <input type="text" id="mensagem-input" placeholder="Digite sua mensagem..." required>
-            <button id="enviar-btn">Enviar</button>
-        </div>
-
-    </div>
+        <section class="form-card">
+            <h2>Atendimento</h2>
+            <div class="info-row" style="margin-bottom: 22px;">
+                <div class="info-card">
+                    <h3>Assistente virtual</h3>
+                    <p>Pronto para ajudar com operações, dúvidas de conta e pagamentos.</p>
+                </div>
+            </div>
+            <div id="chat-container" class="table-card" style="min-height: 320px; padding: 24px; background: rgba(243,250,255,0.92);">
+            </div>
+            <div class="form-group" style="margin-top: 16px;">
+                <label for="mensagem-input">Sua mensagem</label>
+                <input type="text" id="mensagem-input" placeholder="Digite sua mensagem..." />
+            </div>
+            <button class="button button-primary" id="enviar-btn">Enviar</button>
+        </section>
+    </main>
 
     <footer>
-        <ul>
-            <li><a href="homePage.html">Início</a></li>
-            <li><a href="transacoes.html">Transações</a></li>
-            <li><a href="cartao.html">Cartão</a></li>
-            <li><a href="chat.html">Atendimento</a></li>
-            <li><a href="#configuracoes">Configurações</a></li>
-        </ul>
+        <small>HCI Vitta © 2026 | Suporte digital e atendimento instantâneo.</small>
     </footer>
-    <script src="../js/chat.js"></script> </body>
-
+    <script src="../js/chat.js"></script>
+</body>
 </html>

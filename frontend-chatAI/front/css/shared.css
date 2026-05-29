@@ -1,0 +1,362 @@
+@import url("../../imagens/colors.css");
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    font-family: "Inter", "Poppins", "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, var(--soft-blue) 0%, var(--white) 35%, var(--blue-light) 100%);
+    color: var(--blue-dark);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+button,
+a.button {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+button:hover,
+a.button:hover {
+    transform: translateY(-1px);
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 32px;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(10, 32, 82, 0.08);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-logo {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 18px;
+    border: 1px solid rgba(10, 32, 82, 0.12);
+}
+
+.brand-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.brand-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.brand-slogan {
+    font-size: 0.82rem;
+    color: rgba(10, 32, 82, 0.68);
+}
+
+.header-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: rgba(10, 32, 82, 0.88);
+}
+
+.header-nav a {
+    color: rgba(10, 32, 82, 0.88);
+}
+
+.header-nav a:hover {
+    color: var(--blue-light);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 999px;
+    padding: 12px 26px;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.button-primary {
+    background: var(--blue-dark);
+    color: var(--white);
+}
+
+.button-secondary {
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--blue-dark);
+    border: 1px solid rgba(10, 32, 82, 0.12);
+}
+
+.page-content {
+    max-width: 1220px;
+    margin: 120px auto 40px;
+    padding: 0 24px;
+}
+
+.page-title {
+    margin-bottom: 24px;
+}
+
+.page-title h1 {
+    font-size: clamp(2rem, 3vw, 3.4rem);
+    line-height: 1.04;
+    max-width: 760px;
+}
+
+.page-title p {
+    margin-top: 14px;
+    font-size: 1rem;
+    color: rgba(10, 32, 82, 0.78);
+    max-width: 700px;
+}
+
+.eyebrow {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--blue-dark);
+    opacity: 0.8;
+    margin-bottom: 12px;
+}
+
+.hero-grid,
+.card-grid {
+    display: grid;
+    gap: 24px;
+}
+
+.hero-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.hero-copy .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.hero-card,
+.feature-card,
+.plan-card,
+.form-card,
+.table-card,
+.info-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(10, 32, 82, 0.08);
+    border-radius: 30px;
+    padding: 28px;
+    box-shadow: 0 28px 70px rgba(10, 32, 82, 0.08);
+}
+
+.hero-visual {
+    width: 100%;
+    min-height: 400px;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 30px 70px rgba(10, 32, 82, 0.14);
+}
+
+.hero-visual img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.hero-highlights {
+    display: grid;
+    gap: 12px;
+    padding: 24px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(37, 150, 190, 0.12), rgba(255, 255, 255, 0.72));
+}
+
+.hero-highlights span {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--blue-dark);
+    font-weight: 600;
+}
+
+.hero-highlights span::before {
+    content: "•";
+    color: var(--blue-light);
+    font-size: 1.3rem;
+    line-height: 0;
+}
+
+.form-card h2,
+.info-card h2,
+.feature-card h3,
+.plan-card h3 {
+    margin-bottom: 18px;
+    color: var(--blue-dark);
+}
+
+.form-group,
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+label {
+    font-weight: 700;
+    color: rgba(10, 32, 82, 0.82);
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    border-radius: 18px;
+    border: 1px solid rgba(10, 32, 82, 0.14);
+    padding: 14px 18px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--blue-dark);
+}
+
+textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 2px solid rgba(37, 150, 190, 0.3);
+}
+
+.table-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.table-card th,
+.table-card td {
+    padding: 16px 14px;
+    border-bottom: 1px solid rgba(10, 32, 82, 0.08);
+}
+
+.table-card th {
+    font-weight: 700;
+    text-align: left;
+}
+
+.table-card tr:last-child td {
+    border-bottom: none;
+}
+
+.card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.info-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+footer {
+    margin-top: 40px;
+    padding: 28px 24px;
+    text-align: center;
+    color: rgba(10, 32, 82, 0.7);
+}
+
+footer small {
+    font-size: 0.95rem;
+}
+
+.page-note {
+    display: block;
+    margin: 28px 0;
+    color: rgba(10, 32, 82, 0.72);
+}
+
+@media (max-width: 980px) {
+    .hero-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    header {
+        padding: 18px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .page-content {
+        margin-top: 160px;
+    }
+}

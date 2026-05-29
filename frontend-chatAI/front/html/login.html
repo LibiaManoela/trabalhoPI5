@@ -3,31 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="../css/login.css">
-    <script src="../js/main.js"></script>
+    <title>HCI Vitta | Login</title>
+    <link rel="stylesheet" href="../css/shared.css">
+    <script src="../js/main.js" defer></script>
 </head>
 <body>
-    <header class="login-header">
-        <h2>aaaaaaaaaaa</h2>
-        <h1>Banco Digital</h1>
-        <ul>
-            <li><a href="index.html">Sobre</a></li>
-            <li><a href="contato.html">Contato</a></li>
-        </ul>
+    <header>
+        <div class="header-left">
+            <a class="brand-link" href="index.html">
+                <img class="brand-logo" src="../../imagens/logo.jpeg" alt="HCI Vitta logo" />
+                <div class="brand-meta">
+                    <span class="brand-name">HCI Vitta</span>
+                    <span class="brand-slogan">Acesso seguro</span>
+                </div>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Sobre</a>
+            <a href="contact.html">Contato</a>
+        </nav>
+        <div class="header-actions">
+            <a class="button button-secondary" href="dashboard.html">Voltar</a>
+        </div>
     </header>
 
-    <div class="login-body">
-        <div class="login-container">
+    <main class="page-content">
+        <section class="page-title">
+            <p class="eyebrow">Acesso</p>
+            <h1>Entre na sua conta com rapidez</h1>
+            <p>Use sua agência e senha para acessar o painel financeiro e acompanhar seu saldo em tempo real.</p>
+        </section>
+
+        <section class="form-card">
             <h2>Login</h2>
-            <input type="text" id="username" placeholder="Usuário">
-            <input type="password" id="password" placeholder="Senha">
-            <button onclick="login()">Entrar</button>
-            <p id="error-message" class="error"></p>
-        </div>
-    </div>
+            <form>
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" placeholder="Digite seu usuário" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="Digite sua senha" />
+                </div>
+                <button class="button button-primary" type="button" onclick="login()">Entrar</button>
+                <p id="error-message" class="page-note"></p>
+            </form>
+            <p class="page-note">O acesso é para contas cadastradas no banco digital HCI Vitta.</p>
+        </section>
+    </main>
 
-    <p class="PLogin">Somente possível acessar contas cadastradas em Agência</p>
-
+    <footer>
+        <small>HCI Vitta © 2026 | Segurança e transparência.</small>
+    </footer>
 </body>
 </html>

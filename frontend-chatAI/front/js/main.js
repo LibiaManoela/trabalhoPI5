@@ -18,7 +18,7 @@ function login() {
     }).then((data)=>{
         if(data.isValid){
             alert("Login bem-sucedido!");
-            window.location.href = "homePage.html";
+            window.location.href = "dashboard.html";
         } else {
             errorMessage.textContent = "Usuário ou senha incorretos.";
        }
