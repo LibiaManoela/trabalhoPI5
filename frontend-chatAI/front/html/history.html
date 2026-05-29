@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/app.css">
     <script src="https://momentjs.com/downloads/moment.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-    <title>HCI Vitta | Transações</title>
+    <title>HCI Vitta | Histórico de Saúde</title>
 </head>
 
 <body>
@@ -16,58 +16,58 @@
                 <img class="brand-logo" src="../../imagens/logo.jpeg" alt="HCI Vitta logo" />
                 <div class="brand-meta">
                     <span class="brand-name">HCI Vitta</span>
-                    <span class="brand-slogan">Histórico financeiro</span>
+                    <span class="brand-slogan">Registros médicos</span>
                 </div>
             </a>
         </div>
         <nav class="header-nav">
             <a href="dashboard.html">Dashboard</a>
-            <a href="card.html">Cartão</a>
+            <a href="profile.html">Perfil</a>
             <a href="contact.html">Contato</a>
         </nav>
     </header>
 
     <main class="page-content">
         <section class="page-title">
-            <p class="eyebrow">Transações</p>
-            <h1>Confira o histórico das suas movimentações</h1>
-            <p>Veja as últimas entradas e saídas com clareza e acompanhe o total em tempo real.</p>
+            <p class="eyebrow">Histórico</p>
+            <h1>Veja seu histórico de saúde</h1>
+            <p>Acompanhe consultas, exames e eventos médicos registrados no aplicativo.</p>
         </section>
 
         <section class="table-card">
-            <h2>Últimas transações</h2>
+            <h2>Últimos registros</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Data</th>
-                        <th>Descrição</th>
-                        <th>Valor</th>
+                        <th>Evento</th>
+                        <th>Detalhes</th>
                     </tr>
                 </thead>
                 <tbody id="corpoTabelaTransacoes">
                 </tbody>
             </table>
-            <p id="mensagem-sem-transacoes" class="page-note">Nenhuma transação encontrada.</p>
+            <p id="mensagem-sem-transacoes" class="page-note">Nenhum registro encontrado.</p>
             <div id="soma-transacoes" style="margin-top: 24px;">
                 <table>
                     <thead>
                         <tr>
-                            <th>Total de transações</th>
-                            <th>R$ <span id="totalTransacoes">0,00</span></th>
+                            <th>Total de registros</th>
+                            <th><span id="totalTransacoes">0</span></th>
                         </tr>
                     </thead>
                 </table>
             </div>
             <div style="margin-top: 22px; text-align: right;">
-                <button class="button button-secondary" id="btnGerarPDF">Gerar extrato PDF</button>
+                <button class="button button-secondary" id="btnGerarPDF">Gerar relatório PDF</button>
             </div>
         </section>
     </main>
 
     <footer>
-        <small>HCI Vitta © 2026 | Transparência no seu extrato.</small>
+        <small>HCI Vitta © 2026 | Transparência no seu histórico de saúde.</small>
     </footer>
-    <script src="../js/transacoes.js" defer></script>
+    <script src="../js/history.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
     <script>window.jsPDF = window.jspdf?.jsPDF;</script>

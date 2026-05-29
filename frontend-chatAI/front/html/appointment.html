@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/app.css">
+    <title>HCI Vitta | Agendar Consulta</title>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <a class="brand-link" href="index.html">
+                <img class="brand-logo" src="../../imagens/logo.jpeg" alt="HCI Vitta logo" />
+                <div class="brand-meta">
+                    <span class="brand-name">HCI Vitta</span>
+                    <span class="brand-slogan">Agendamento fácil</span>
+                </div>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="history.html">Histórico</a>
+            <a href="contact.html">Contato</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <section class="page-title">
+            <p class="eyebrow">Consulta</p>
+            <h1>Marque sua próxima consulta médica</h1>
+            <p>Escolha a especialidade e a data para reservar seu atendimento com facilidade.</p>
+        </section>
+
+        <section class="form-card">
+            <h2>Agendar consulta</h2>
+            <form id="agendaConsultaForm">
+                <div class="form-group">
+                    <label for="especialidade">Especialidade</label>
+                    <input type="text" id="especialidade" name="especialidade" placeholder="Clínico geral, cardiologia" required>
+                </div>
+                <div class="form-group">
+                    <label for="dataConsulta">Data da consulta</label>
+                    <input type="date" id="dataConsulta" name="dataConsulta" required>
+                </div>
+                <button class="button button-primary" type="submit">Agendar</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <small>HCI Vitta © 2026 | Consultas agendadas com segurança.</small>
+    </footer>
+    <script src="../js/appointment.js"></script>
+</body>
+</html>
