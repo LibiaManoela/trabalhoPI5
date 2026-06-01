@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/app.css">
-    <title>HCI Vitta | Perfil de Saúde</title>
+    <title>HCI Vitta | Perfil do Colaborador</title>
 </head>
 <body>
     <header>
         <div class="header-left">
-            <a class="brand-link" href="index.html">
-                <img class="brand-logo" src="../../imagens/logo.jpeg" alt="HCI Vitta logo" />
+            <a class="brand-link" href="dashboard.html">
+                <img class="brand-logo" src="../imagens/logo.jpeg" alt="HCI Vitta logo" />
                 <div class="brand-meta">
                     <span class="brand-name">HCI Vitta</span>
-                    <span class="brand-slogan">Dados de saúde</span>
+                    <span class="brand-slogan">Painel Interno</span>
                 </div>
             </a>
         </div>
@@ -23,41 +23,79 @@
             <a href="contact.html">Contato</a>
         </nav>
         <div class="header-actions">
-            <a class="button button-secondary" href="teleconsulta.html">Teleconsulta</a>
+            <a class="button button-secondary" href="login.html">Sair</a>
         </div>
     </header>
 
     <main class="page-content">
         <section class="page-title">
-            <p class="eyebrow">Perfil</p>
-            <h1>Seu prontuário de paciente</h1>
-            <p>Mantenha seu histórico médico e informações de convênio sempre atualizados.</p>
+            <p class="eyebrow">Colaborador</p>
+            <h1>Perfil do Funcionário</h1>
+            <p>Visualize as suas credenciais de acesso, o setor de atuação e o status do seu vínculo com a instituição.</p>
         </section>
 
-        <section class="info-card">
-            <div style="padding: 24px; background: linear-gradient(135deg, rgba(37,150,190,0.2), rgba(255,255,255,0.4)); border-radius: 28px;">
-                <h2>Convênio de Saúde</h2>
-                <p class="page-note">Dados fictícios para demonstração. Em produção, suas informações são exibidas de forma segura.</p>
-                <div style="margin-top: 24px; display:flex; flex-direction:column; gap:22px;">
-                    <div>
-                        <strong>Número do convênio:</strong>
-                        <p>1234 5678 9012 3456</p>
-                    </div>
-                    <div>
-                        <strong>Validade:</strong>
-                        <p>12/28</p>
-                    </div>
-                    <div>
-                        <strong>Titular:</strong>
-                        <p>JOÃO SILVA</p>
-                    </div>
+        <section class="info-card profile-card">
+            <div class="profile-header">
+                <h2>Dados do Colaborador</h2>
+                <p class="page-note">Este painel é de uso interno exclusivo para colaboradores e agentes da instituição.</p>
+            </div>
+
+            <div class="profile-list">
+                <div>
+                    <strong>Nome:</strong>
+                    <p>João Silva</p>
+                </div>
+                <div>
+                    <strong>Cargo:</strong>
+                    <p>Assistente Administrativo</p>
+                </div>
+                <div>
+                    <strong>Setor:</strong>
+                    <p>Atendimento ao Paciente</p>
+                </div>
+                <div>
+                    <strong>Matrícula:</strong>
+                    <p>FUNC-32145</p>
+                </div>
+                <div>
+                    <strong>Turno:</strong>
+                    <p>08:00 - 17:00</p>
+                </div>
+                <div>
+                    <strong>Status:</strong>
+                    <p>Ativo</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="info-card profile-card" style="margin-top: 24px;">
+            <div class="profile-header">
+                <h2>Acesso Institucional</h2>
+                <p class="page-note">As informações abaixo são apenas um exemplo de como apresentar credenciais internas ao colaborador.</p>
+            </div>
+            <div class="profile-list">
+                <div>
+                    <strong>Nível de acesso:</strong>
+                    <p>Operacional - Triagem &amp; Atendimento</p>
+                </div>
+                <div>
+                    <strong>Último login:</strong>
+                    <p>27/05/2026 09:12</p>
+                </div>
+                <div>
+                    <strong>Supervisor:</strong>
+                    <p>Maria Oliveira</p>
+                </div>
+                <div>
+                    <strong>Área de suporte:</strong>
+                    <p>TI Clínica</p>
                 </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <small>HCI Vitta © 2026 | Seus dados de saúde seguros.</small>
+        <small>HCI Vitta © 2026 | Sistema Interno de Gestão de Colaboradores.</small>
     </footer>
 </body>
 </html>

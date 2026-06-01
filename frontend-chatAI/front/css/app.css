@@ -1,4 +1,10 @@
-@import url("../../imagens/colors.css");
+:root {
+    --blue-light: #2596be;
+    --blue-dark: #0a2052;
+    --gray-light: #cfd9e2;
+    --white: #f4feff;
+    --soft-blue: #d3eff2;
+}
 
 * {
     box-sizing: border-box;
@@ -245,6 +251,41 @@ header {
     border-radius: 30px;
     padding: 28px;
     box-shadow: 0 28px 70px rgba(10, 32, 82, 0.08);
+}
+
+.profile-card {
+    padding: 32px;
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(245, 249, 253, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.profile-header {
+    margin-bottom: 22px;
+}
+
+.profile-header h2 {
+    margin-bottom: 10px;
+    color: var(--blue-dark);
+}
+
+.profile-list {
+    display: grid;
+    gap: 18px;
+}
+
+.profile-list div {
+    display: grid;
+    gap: 6px;
+}
+
+.profile-list strong {
+    font-weight: 700;
+    color: rgba(10, 32, 82, 0.85);
+}
+
+.profile-list p {
+    margin: 0;
+    color: rgba(10, 32, 82, 0.78);
 }
 
 .hero-visual {
