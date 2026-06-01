@@ -5,83 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/app.css">
     <script src="../js/next-appointment.js" defer></script>
-    <title>HCI Vitta | Painel de Saúde</title>
+    <title>HCI Vitta | Painel Operacional</title>
 </head>
 <body>
     <header>
         <div class="header-left">
-            <a class="brand-link" href="index.html">
+            <a class="brand-link" href="dashboard.html">
                 <img class="brand-logo" src="../../imagens/logo.jpeg" alt="HCI Vitta logo" />
                 <div class="brand-meta">
                     <span class="brand-name">HCI Vitta</span>
-                    <span class="brand-slogan">Seu app de saúde</span>
+                    <span class="brand-slogan">Estação de Trabalho</span>
                 </div>
             </a>
         </div>
         <nav class="header-nav">
-            <a href="dashboard.html">Dashboard</a>
-            <a href="history.html">Histórico</a>
-            <a href="profile.html">Perfil</a>
-            <a href="contact.html">Contato</a>
+            <a href="dashboard.html" class="active">Painel Principal</a>
+            <a href="chat.html">Nova Triagem (IA)</a>
+            <a href="appointment.html">Validação Médica</a>
+            <a href="history.html">Histórico de Admissões</a>
         </nav>
         <div class="header-actions">
-            <a class="button button-secondary" href="login.html">Sair</a>
+            <a class="button button-secondary" href="login.html">Sair do Sistema</a>
         </div>
     </header>
 
     <main class="page-content">
         <section class="page-title">
-            <p class="eyebrow">Painel</p>
-            <h1>Visão completa da sua saúde em um só lugar</h1>
-            <p>Acompanhe consultas, exames e recomendações com rapidez e segurança.</p>
+            <p class="eyebrow">Monitoramento</p>
+            <h1>Painel de Triagem e Fluxo de Pacientes</h1>
+            <p>Gerencie o fluxo interno, realize novos diagnósticos preditivos e acompanhe os pareceres médicos de retroalimentação.</p>
         </section>
 
         <section class="hero-grid">
             <div class="hero-copy">
                 <div class="info-card">
-                    <h2>Olá, paciente</h2>
-                    <p>Paciente HCI Saúde</p>
-                    <p class="page-note">Acesse seus serviços com segurança e tenha um cuidado integrado em cada etapa.</p>
+                    <h2>Módulo de Admissão Integrada</h2>
+                    <p>Operador: Corpo Técnico / Clínico</p>
+                    <p class="page-note">Os diagnósticos gerados pela Inteligência Artificial devem ser obrigatoriamente validados por um médico para a retroalimentação contínua da malha do modelo.</p>
                 </div>
                 <div class="card-grid">
-                    <div class="feature-card">
-                        <h3>Consultas agendadas</h3>
-                        <p>Veja seus atendimentos futuros e receba lembretes importantes.</p>
+                    <div class="feature-card" style="border-left: 4px solid var(--blue-light);">
+                        <h3>Triagens Efetuadas Hoje</h3>
+                        <p style="font-size: 1.5rem; font-weight: bold; margin: 5px 0; color: var(--blue-dark);">14 Pacientes</p>
                     </div>
-                    <div class="feature-card">
-                        <h3>Monitoramento de saúde</h3>
-                        <p>Acompanhe resultados de exames, histórico médico e recomendações.</p>
+                    <div class="feature-card" style="border-left: 4px solid var(--gray-light);">
+                        <h3>Aguardando Validação Médica</h3>
+                        <p style="font-size: 1.5rem; font-weight: bold; margin: 5px 0; color: var(--blue-light);">3 Casos</p>
                     </div>
                 </div>
             </div>
-            <div class="hero-card">
-                <h2>Próxima consulta</h2>
-                <p id="valor" style="font-size: 2.2rem; font-weight: 700; margin: 18px 0;">Terça-feira, 14h</p>
-                <p>Consultas agendadas com sua clínica de confiança.</p>
+            <div class="hero-card" style="background-color: var(--soft-blue); border: 1px solid var(--gray-light);">
+                <h2>Fluxo de Trabalho Primário</h2>
+                <p style="font-size: 1.1rem; font-weight: 600; margin: 12px 0; color: var(--blue-dark);">Iniciar Novo Atendimento</p>
+                <p style="margin-bottom: 15px;">Colete dados vitais e queixas para processamento do diagnóstico probabilístico da IA.</p>
+                <a class="button button-primary" href="chat.html" style="display: block; text-align: center;">Iniciar Triagem Inteligente</a>
             </div>
         </section>
 
         <section class="card-grid">
             <div class="plan-card">
-                <h3>Agendar consulta</h3>
-                <p>Marque sua próxima consulta médica com facilidade.</p>
-                <a class="button button-secondary" href="appointment.html">Agendar</a>
+                <h3>Módulo do Médico</h3>
+                <p>Aprovação, reprovação e retificação de diagnósticos da IA para retroalimentação do sistema.</p>
+                <a class="button button-secondary" href="appointment.html">Validar Diagnósticos</a>
             </div>
             <div class="plan-card">
-                <h3>Resultados de exames</h3>
-                <p>Confira seu histórico de exames e relatórios de saúde.</p>
-                <a class="button button-secondary" href="history.html">Ver histórico</a>
+                <h3>Histórico Geral</h3>
+                <p>Consulte relatórios antigos de triagem, prontuários rápidos e designações anteriores.</p>
+                <a class="button button-secondary" href="history.html">Ver Histórico</a>
             </div>
             <div class="plan-card">
-                <h3>Plano de cuidados</h3>
-                <p>Personalize recomendações de saúde e acompanhe seu plano.</p>
-                <a class="button button-secondary" href="care-plan.html">Abrir plano</a>
+                <h3>Protocolo Clínico</h3>
+                <p>Verifique as diretrizes institucionais de encaminhamento e designação de leitos/especialidades.</p>
+                <a class="button button-secondary" href="profile.html">Documentação</a>
             </div>
         </section>
     </main>
 
     <footer>
-        <small>HCI Vitta © 2026 | Saúde e bem-estar.</small>
+        <small>HCI Vitta © 2026 | Sistema Interno de Suporte à Decisão Clínica.</small>
     </footer>
 </body>
 </html>

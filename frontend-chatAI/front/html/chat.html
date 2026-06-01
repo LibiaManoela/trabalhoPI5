@@ -4,52 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/app.css">
-    <title>HCI Vitta | Chat de Saúde</title>
+    <title>HCI Vitta | Triagem e Diagnóstico por IA</title>
 </head>
 <body>
     <header>
         <div class="header-left">
-            <a class="brand-link" href="index.html">
+            <a class="brand-link" href="dashboard.html">
                 <img class="brand-logo" src="../../imagens/logo.jpeg" alt="HCI Vitta logo" />
                 <div class="brand-meta">
                     <span class="brand-name">HCI Vitta</span>
-                    <span class="brand-slogan">Atendimento 24h</span>
+                    <span class="brand-slogan">Módulo Enfermagem</span>
                 </div>
             </a>
         </div>
         <nav class="header-nav">
-            <a href="dashboard.html">Dashboard</a>
-            <a href="contact.html">Contato</a>
+            <a href="dashboard.html">Painel Principal</a>
+            <a href="chat.html" class="active">Nova Triagem (IA)</a>
+            <a href="appointment.html">Validação Médica</a>
         </nav>
+        <div class="header-actions">
+            <a class="button button-secondary" href="dashboard.html">Voltar ao Painel</a>
+        </div>
     </header>
 
     <main class="page-content">
         <section class="page-title">
-            <p class="eyebrow">Chat</p>
-            <h1>Converse com nosso assistente de saúde</h1>
-            <p>Use o chat para tirar dúvidas sobre sintomas, agendar consultas e receber orientações de bem-estar.</p>
+            <p class="eyebrow">Entrada de Dados</p>
+            <h1>Assistente de Análise Diagnóstica Preditiva</h1>
+            <p>Insira detalhadamente a anamnese, os sinais vitais e os sintomas relatados pelo paciente para obter a sugestão de diagnóstico e a sua classificação de risco.</p>
         </section>
 
         <section class="form-card">
-            <h2>Atendimento</h2>
+            <h2>Prontuário de Triagem Instantânea</h2>
             <div class="info-row" style="margin-bottom: 22px;">
-                <div class="info-card">
-                    <h3>Assistente virtual</h3>
-                    <p>Pronto para ajudar com sintomas, orientações e recomendações de cuidados.</p>
+                <div class="info-card" style="background-color: var(--soft-blue); border: 1px solid var(--gray-light);">
+                    <h3>Coleta Baseada em Evidências</h3>
+                    <p>O motor de IA analisará os sintomas inseridos cruzando-os com as diretrizes clínicas integradas na base corporativa.</p>
                 </div>
             </div>
-            <div id="chat-container" class="table-card" style="min-height: 320px; padding: 24px; background: rgba(243,250,255,0.92);">
-            </div>
+            
+            <div id="chat-container" class="table-card" style="min-height: 350px; padding: 24px; background: var(--white); border: 1px solid var(--gray-light); border-radius: 8px;">
+                </div>
+            
             <div class="form-group" style="margin-top: 16px;">
-                <label for="mensagem-input">Sua mensagem</label>
-                <input type="text" id="mensagem-input" placeholder="Digite sua mensagem..." />
+                <label for="mensagem-input">Sintomas, Queixas e Parâmetros Clínicos</label>
+                <input type="text" id="mensagem-input" placeholder="Ex: Paciente masculino, 45 anos, dor torácica irradiando para o braço esquerdo, PA 150/90..." />
             </div>
-            <button class="button button-primary" id="enviar-btn">Enviar</button>
+            <button class="button button-primary" id="enviar-btn" style="width: 100%;">Processar e Gerar Diagnóstico Provável</button>
         </section>
     </main>
 
     <footer>
-        <small>HCI Vitta © 2026 | Suporte de saúde instantâneo.</small>
+        <small>HCI Vitta © 2026 | Processamento Clínico Computacional Confidencial.</small>
     </footer>
     <script src="../js/chat.js"></script>
 </body>

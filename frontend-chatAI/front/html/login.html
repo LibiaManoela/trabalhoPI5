@@ -3,57 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HCI Vitta | Login</title>
+    <title>HCI Vitta | Autenticação Institucional</title>
     <link rel="stylesheet" href="../css/app.css">
     <script src="../js/app.js" defer></script>
 </head>
 <body>
     <header>
         <div class="header-left">
-            <a class="brand-link" href="index.html">
+            <a class="brand-link" href="#">
                 <img class="brand-logo" src="../../imagens/logo.jpeg" alt="HCI Vitta logo" />
                 <div class="brand-meta">
                     <span class="brand-name">HCI Vitta</span>
-                    <span class="brand-slogan">Acesso seguro</span>
+                    <span class="brand-slogan">Painel Interno</span>
                 </div>
             </a>
         </div>
         <nav class="header-nav">
-            <a href="index.html">Sobre</a>
-            <a href="contact.html">Contato</a>
+            <span style="color: var(--white); font-size: 0.9rem; font-weight: 500;">Sistema de Triagem Integrada</span>
         </nav>
-        <div class="header-actions">
-            <a class="button button-secondary" href="dashboard.html">Voltar</a>
-        </div>
     </header>
 
     <main class="page-content">
         <section class="page-title">
-            <p class="eyebrow">Acesso</p>
-            <h1>Entre no seu painel de saúde</h1>
-            <p>Use seu usuário e senha para acessar consultas, exames e histórico médico.</p>
+            <p class="eyebrow">Autenticação</p>
+            <h1>Acesso ao Sistema Clínico</h1>
+            <p>Insira as suas credenciais profissionais para acessar a triagem por IA, o histórico de admissões e o módulo de validação médica.</p>
         </section>
 
         <section class="form-card">
-            <h2>Login</h2>
+            <h2>Login de Funcionário</h2>
             <form>
                 <div class="form-group">
-                    <label for="username">Usuário</label>
-                    <input type="text" id="username" placeholder="Digite seu usuário" />
+                    <label for="username">Identificação / Coren / CRM</label>
+                    <input type="text" id="username" placeholder="Digite o seu usuário ou registro profissional" required />
                 </div>
                 <div class="form-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" placeholder="Digite sua senha" />
+                    <label for="password">Senha Corporativa</label>
+                    <input type="password" id="password" placeholder="Digite a sua senha" required />
                 </div>
-                <button class="button button-primary" type="button" onclick="login()">Entrar</button>
+                <button class="button button-primary" type="button" onclick="login()">Autenticar Entrada</button>
                 <p id="error-message" class="page-note"></p>
             </form>
-            <p class="page-note">Acesso exclusivo para pacientes do HCI Vitta Saúde.</p>
+            <p class="page-note" style="color: var(--blue-dark); font-weight: 500;">Acesso restrito a colaboradores autorizados da instituição.</p>
         </section>
     </main>
 
     <footer>
-        <small>HCI Vitta © 2026 | Segurança e cuidado.</small>
+        <small>HCI Vitta © 2026 | Canal de Segurança e Governança Clínica.</small>
     </footer>
 </body>
 </html>

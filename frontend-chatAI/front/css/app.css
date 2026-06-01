@@ -11,10 +11,48 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Aplicando a identidade visual nos elementos padrão */
 body {
-    min-height: 100vh;
-    font-family: "Inter", "Poppins", "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, var(--soft-blue) 0%, var(--white) 35%, var(--blue-light) 100%);
+    background-color: var(--white);
+    color: var(--blue-dark);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Cabeçalhos e Barras de Navegação Institucionais */
+.navbar {
+    background-color: var(--blue-dark);
+    color: var(--white);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Botões de Ação Principal (ex: Enviar Triagem, Aprovar) */
+.btn-primary {
+    background-color: var(--blue-light);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--blue-dark);
+}
+
+/* Cards para exibir Pacientes ou Diagnósticos */
+.card-patient {
+    background-color: var(--soft-blue);
+    border: 1px solid var(--gray-light);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
     color: var(--blue-dark);
 }
 
