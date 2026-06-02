@@ -267,6 +267,96 @@ header {
     box-shadow: 0 28px 70px rgba(10, 32, 82, 0.08);
 }
 
+.protocol-card {
+    border: 1px solid rgba(37, 150, 190, 0.18);
+    background: linear-gradient(180deg, rgba(240, 248, 255, 0.94), rgba(255, 255, 255, 0.98));
+}
+
+.protocol-header {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.protocol-header h2 {
+    margin: 0;
+    color: var(--blue-dark);
+}
+
+.protocol-content {
+    display: grid;
+    gap: 22px;
+}
+
+.protocol-description {
+    padding: 22px;
+    background: rgba(37, 150, 190, 0.06);
+    border-radius: 24px;
+    color: var(--blue-dark);
+    line-height: 1.65;
+}
+
+.protocol-table-wrapper {
+    overflow-x: auto;
+}
+
+.protocol-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 600px;
+}
+
+.protocol-table th,
+.protocol-table td {
+    padding: 16px 18px;
+    text-align: left;
+}
+
+.protocol-table th {
+    background: var(--blue-dark);
+    color: #fff;
+    font-weight: 700;
+}
+
+.protocol-table tbody tr {
+    color: #fff;
+}
+
+.protocol-table tbody tr td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.protocol-table tbody tr.protocol-red {
+    background: #c62828;
+}
+
+.protocol-table tbody tr.protocol-yellow {
+    background: #ffb300;
+}
+
+.protocol-table tbody tr.protocol-green {
+    background: #43a047;
+}
+
+.protocol-table tbody tr.protocol-blue {
+    background: #1565c0;
+}
+
+.protocol-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+@media (max-width: 720px) {
+    .protocol-content {
+        gap: 16px;
+    }
+
+    .protocol-table {
+        min-width: 100%;
+    }
+}
+
 .profile-card {
     padding: 32px;
     border-radius: 28px;
