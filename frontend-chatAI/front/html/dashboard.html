@@ -14,7 +14,7 @@
                 <img class="brand-logo" src="../imagens/logo.jpeg" alt="HCI Vitta logo" />
                 <div class="brand-meta">
                     <span class="brand-name">HCI Vitta</span>
-                    <span class="brand-slogan">Estação de Trabalho</span>
+                    <span class="brand-slogan">Sistema de Gestão Clínica</span>
                 </div>
             </a>
         </div>
@@ -23,9 +23,11 @@
             <a href="chat.html">Nova Triagem (IA)</a>
             <a href="appointment.html">Validação Médica</a>
             <a href="history.html">Histórico de Admissões</a>
+            <a href="profile.html">Perfil</a>
+            <a href="funcionarios.html">Equipe</a>
         </nav>
         <div class="header-actions">
-            <a class="button button-secondary" href="login.html">Sair do Sistema</a>
+            <a class="button button-secondary button-placeholder" href="dashboard.html" aria-hidden="true">Voltar ao Painel</a>
         </div>
     </header>
 
@@ -62,7 +64,13 @@
             </div>
         </section>
 
-        <section class="card-grid">
+        <section class="protocol-card info-card" style="background-color: var(--white); border: 1px solid var(--gray-light); margin-top: 24px;">
+            <h2>Protocolo de Classificação de Risco</h2>
+            <p>O sistema utiliza, de forma ilustrativa, o protocolo de triagem de Manchester para classificar pacientes por risco e urgência. Este protocolo organiza os atendimentos em faixas de prioridade clínica, ajudando a definir quem precisa de intervenção imediata.</p>
+            <p class="page-note">A IA sugere a categoria de risco e o médico confirma ou ajusta a gravidade antes de encaminhar o paciente.</p>
+        </section>
+
+        <section class="card-grid" style="margin-top: 24px;">
             <div class="plan-card">
                 <h3>Módulo do Médico</h3>
                 <p>Aprovação, reprovação e retificação de diagnósticos da IA para retroalimentação do sistema.</p>
@@ -74,9 +82,9 @@
                 <a class="button button-secondary" href="history.html">Ver Histórico</a>
             </div>
             <div class="plan-card">
-                <h3>Protocolo Clínico</h3>
-                <p>Verifique as diretrizes institucionais de encaminhamento e designação de leitos/especialidades.</p>
-                <a class="button button-secondary" href="profile.html">Documentação</a>
+                <h3>Equipe Clínica</h3>
+                <p>Veja os colaboradores e funções envolvidas no processo de triagem, validação e suporte.</p>
+                <a class="button button-secondary" href="funcionarios.html">Ver Funcionários</a>
             </div>
         </section>
     </main>

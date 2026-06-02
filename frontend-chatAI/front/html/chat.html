@@ -13,7 +13,7 @@
                 <img class="brand-logo" src="../imagens/logo.jpeg" alt="HCI Vitta logo" />
                 <div class="brand-meta">
                     <span class="brand-name">HCI Vitta</span>
-                    <span class="brand-slogan">Módulo Enfermagem</span>
+                    <span class="brand-slogan">Sistema de Gestão Clínica</span>
                 </div>
             </a>
         </div>
@@ -21,6 +21,9 @@
             <a href="dashboard.html">Painel Principal</a>
             <a href="chat.html" class="active">Nova Triagem (IA)</a>
             <a href="appointment.html">Validação Médica</a>
+            <a href="history.html">Histórico de Admissões</a>
+            <a href="profile.html">Perfil</a>
+            <a href="funcionarios.html">Equipe</a>
         </nav>
         <div class="header-actions">
             <a class="button button-secondary" href="dashboard.html">Voltar ao Painel</a>
@@ -37,18 +40,19 @@
         <section class="form-card">
             <h2>Prontuário de Triagem Instantânea</h2>
             <div class="info-row" style="margin-bottom: 22px;">
-                <div class="info-card" style="background-color: var(--soft-blue); border: 1px solid var(--gray-light);">
+                <div class="info-card accent-card">
                     <h3>Coleta Baseada em Evidências</h3>
                     <p>O motor de IA analisará os sintomas inseridos cruzando-os com as diretrizes clínicas integradas na base corporativa.</p>
                 </div>
-            </div>
-            
-            <div id="chat-container" class="table-card" style="min-height: 350px; padding: 24px; background: var(--white); border: 1px solid var(--gray-light); border-radius: 8px;">
+                <div id="chat-container" class="result-panel">
+                    <h3>Diagnóstico Preditivo</h3>
+                    <p class="page-note">Os resultados da IA aparecerão aqui após o processamento.</p>
                 </div>
-            
-            <div class="form-group" style="margin-top: 16px;">
+            </div>
+
+            <div class="form-group">
                 <label for="mensagem-input">Sintomas, Queixas e Parâmetros Clínicos</label>
-                <input type="text" id="mensagem-input" placeholder="Ex: Paciente masculino, 45 anos, dor torácica irradiando para o braço esquerdo, PA 150/90..." />
+                <textarea id="mensagem-input" rows="4" placeholder="Ex: Paciente masculino, 45 anos, dor torácica irradiando para o braço esquerdo, PA 150/90..."></textarea>
             </div>
             <button class="button button-primary" id="enviar-btn" style="width: 100%;">Processar e Gerar Diagnóstico Provável</button>
         </section>
