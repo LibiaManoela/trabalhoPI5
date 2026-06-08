@@ -1,0 +1,68 @@
+services:
+  # 1. Banco de Dados PostgreSQL
+  database:
+    image: postgres:15-alpine
+    container_name: hcivitta_db_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "090106"
+      POSTGRES_DB: hcivitta_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hcivitta_network
+
+  # 2. Interface do pgAdmin para gerenciar o banco pelo navegador
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: hcivitta_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@hcivitta.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - database
+    networks:
+      - hcivitta_network
+
+  # 3. Motor de IA (Python + ChromaDB)
+  ia_engine:
+    build: ./IA_Engine
+    container_name: hcivitta_ia_engine
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:090106@database:5432/hcivitta_db
+    volumes:
+      - ./IA_Engine/chroma_db:/app/chroma_db
+    depends_on:
+      - database
+    networks:
+      - hcivitta_network
+
+  # 4. Back-end e Servidor Front-end (Node.js)
+  backend:
+    build: ./backend-chatAI
+    container_name: hcivitta_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_USER=postgres
+      - DB_HOST=database
+      - DB_PASSWORD=090106
+      - DB_NAME=hcivitta_db
+      - DB_PORT=5432
+    depends_on:
+      - database
+    networks:
+      - hcivitta_network
+
+volumes:
+  postgres_data:
+
+networks:
+  hcivitta_network:
+    driver: bridge
