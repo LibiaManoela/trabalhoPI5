@@ -218,6 +218,110 @@ app.get('/usuarios', async (_req, res) => {
   }
 });
 
+app.post('/usuarios', async (req, res) => {
+  const { nome, username, senha, perfil, registro_profissional } = req.body;
+
+  if (!nome || !username || !senha || !perfil) {
+    return res.status(400).json({ error: 'Nome, usuário, senha e perfil são obrigatórios.' });
+  }
+
+  try {
+    const senhaHash = bcrypt.hashSync(senha, 10);
+    
+    const result = await pool.query(
+      `INSERT INTO usuarios (nome, username, senha_hash, perfil, registro_profissional, ativo)
+       VALUES ($1, $2, $3, $4, $5, TRUE)
+       RETURNING id, nome, username, perfil, registro_profissional, ativo`,
+      [nome, username, senhaHash, perfil, registro_profissional || null]
+    );
+
+    return res.status(201).json({ usuario: result.rows[0] });
+  } catch (error) {
+    console.error('Erro ao criar usuário:', error);
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Usuário ou registro profissional já existe.' });
+    }
+    return res.status(500).json({ error: 'Erro ao criar usuário no banco de dados.' });
+  }
+});
+
+app.put('/usuarios/:id', async (req, res) => {
+  const { nome, senha, perfil, registro_profissional } = req.body;
+  const usuarioId = Number(req.params.id);
+
+  if (!nome && !senha && !perfil && !registro_profissional) {
+    return res.status(400).json({ error: 'Pelo menos um campo deve ser informado para atualização.' });
+  }
+
+  try {
+    let query = 'UPDATE usuarios SET ';
+    const updates = [];
+    const values = [];
+    let paramCount = 1;
+
+    if (nome) {
+      updates.push(`nome = $${paramCount}`);
+      values.push(nome);
+      paramCount++;
+    }
+
+    if (senha) {
+      const senhaHash = bcrypt.hashSync(senha, 10);
+      updates.push(`senha_hash = $${paramCount}`);
+      values.push(senhaHash);
+      paramCount++;
+    }
+
+    if (perfil) {
+      updates.push(`perfil = $${paramCount}`);
+      values.push(perfil);
+      paramCount++;
+    }
+
+    if (registro_profissional) {
+      updates.push(`registro_profissional = $${paramCount}`);
+      values.push(registro_profissional);
+      paramCount++;
+    }
+
+    query += updates.join(', ');
+    query += ` WHERE id = $${paramCount} RETURNING id, nome, username, perfil, registro_profissional, ativo`;
+    values.push(usuarioId);
+
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    return res.json({ usuario: result.rows[0] });
+  } catch (error) {
+    console.error('Erro ao atualizar usuário:', error);
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Registro profissional já existe.' });
+    }
+    return res.status(500).json({ error: 'Erro ao atualizar usuário.' });
+  }
+});
+
+app.get('/usuarios/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, nome, username, perfil, registro_profissional, ativo, criado_em FROM usuarios WHERE id = $1',
+      [req.params.id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error);
+    return res.status(500).json({ error: 'Erro ao buscar usuário.' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });

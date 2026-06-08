@@ -41,29 +41,15 @@
             <h2>Casos Clínicos Aguardando Parecer</h2>
             <p style="margin-bottom: 20px;" class="page-note">Selecione uma triagem para revisar as decisões automatizadas da Inteligência Artificial.</p>
             
-            <form id="agendaConsultaForm">
-                <div class="info-card" style="background-color: var(--white); border-left: 5px solid var(--blue-light); padding: 18px; margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <h3>Paciente: Código Ref #1042</h3>
-                        <span style="background-color: var(--soft-blue); color: var(--blue-dark); padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; font-weight: bold;">Triado por: Enf. Responsável</span>
-                    </div>
-                    <p style="margin: 8px 0;"><strong>Dados Inseridos:</strong> Poliúria, polidipsia, perda de peso inexplicada e glicemia capilar em jejum de 210 mg/dL.</p>
-                    
-                    <div style="background-color: #fff; padding: 12px; border: 1px solid var(--gray-light); border-radius: 6px; margin: 10px 0;">
-                        <p style="margin: 0; color: var(--blue-dark);"><strong>Diagnóstico Sugerido pela IA:</strong> Diabetes Mellitus Tipo 2 Provável</p>
-                        <p style="margin: 5px 0 0 0; font-weight: 600; color: #c0392b;">Designação Proposta: Encaminhamento para Endocrinologia Geral / Estabilização Ambulatorial</p>
-                    </div>
+            <div id="triagensCarregando" style="text-align: center; padding: 20px; color: #999;">
+                Carregando triagens pendentes...
+            </div>
 
-                    <div class="form-group" style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button type="button" class="button button-primary" style="background-color: #2e7d32; flex: 1;" onclick="homologarCaso(1042, true)">
-                            ✓ Aprovar Diagnóstico (Retroalimentar IA)
-                        </button>
-                        <button type="button" class="button button-secondary" style="border-color: #c62828; color: #c62828; flex: 1;" onclick="homologarCaso(1042, false)">
-                            ✗ Rejeitar / Retificar Predição
-                        </button>
-                    </div>
-                </div>
-            </form>
+            <div id="triagensLista"></div>
+
+            <div id="triagensVazias" style="display: none; text-align: center; padding: 20px; color: #999;">
+                Nenhuma triagem pendente de validação.
+            </div>
         </section>
     </main>
 
@@ -71,18 +57,5 @@
         <small>HCI Vitta © 2026 | Auditoria Médica e Aprendizado Continuado de Máquina.</small>
     </footer>
     <script src="../js/appointment.js"></script>
-    <script>
-        // Função utilitária ilustrativa para o comportamento da página de validação
-        function homologarCaso(idCaso, aprovado) {
-            if (aprovado) {
-                alert("Diagnóstico do caso #" + idCaso + " homologado com sucesso! Dados enviados para retroalimentação do modelo.");
-            } else {
-                const correcao = prompt("Insira o diagnóstico e a designação corretos para ajustar a IA:");
-                if (correcao) {
-                    alert("Retificação processada. O sistema utilizou sua correção para calibrar os pesos do modelo.");
-                }
-            }
-        }
-    </script>
 </body>
 </html>

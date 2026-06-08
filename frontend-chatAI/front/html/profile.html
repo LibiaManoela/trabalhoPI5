@@ -26,78 +26,90 @@
             <a href="funcionarios.html">Equipe</a>
         </nav>
         <div class="header-actions">
-            <a class="button button-secondary" href="dashboard.html">Voltar ao Painel</a>
+            <a class="button button-secondary" href="login.html">Sair</a>
         </div>
     </header>
 
     <main class="page-content">
-        <section style="margin-bottom: 24px; display: flex; justify-content: flex-end;">
-            <a class="button button-secondary" href="login.html">Sair</a>
-        </section>
         <section class="page-title">
             <p class="eyebrow">Colaborador</p>
             <h1>Perfil do Funcionário</h1>
-            <p>Visualize as suas credenciais de acesso, o setor de atuação e o status do seu vínculo com a instituição.</p>
+            <p>Visualize e edite suas informações profissionais.</p>
         </section>
 
-        <section class="info-card profile-card">
-            <div class="profile-header">
-                <h2>Dados do Colaborador</h2>
-                <p class="page-note">Este painel é de uso interno exclusivo para colaboradores e agentes da instituição.</p>
-            </div>
+        <section class="form-card">
+            <h2>Dados do Colaborador</h2>
+            <p class="page-note" id="carregando">Carregando informações...</p>
 
-            <div class="profile-list">
-                <div>
-                    <strong>Nome:</strong>
-                    <p>João Silva</p>
+            <form id="perfilForm" style="display: none;">
+                <div class="info-row" style="gap: 20px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="nome">Nome Completo</label>
+                        <input type="text" id="nome" name="nome" readonly style="background-color: #f5f5f5;" />
+                    </div>
+
+                    <div class="form-group" style="flex: 1;">
+                        <label for="username">Usuário</label>
+                        <input type="text" id="username" name="username" readonly style="background-color: #f5f5f5;" />
+                    </div>
                 </div>
-                <div>
-                    <strong>Cargo:</strong>
-                    <p>Assistente Administrativo</p>
+
+                <div class="info-row" style="gap: 20px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="perfil">Perfil / Cargo</label>
+                        <input type="text" id="perfil" name="perfil" readonly style="background-color: #f5f5f5;" />
+                    </div>
+
+                    <div class="form-group" style="flex: 1;">
+                        <label for="registro_profissional">COREN / CRM</label>
+                        <input type="text" id="registro_profissional" name="registro_profissional" placeholder="Seu registro profissional" />
+                    </div>
                 </div>
-                <div>
-                    <strong>Setor:</strong>
-                    <p>Atendimento ao Paciente</p>
+
+                <div class="form-group">
+                    <label for="senha">Nova Senha (deixe em branco para não alterar)</label>
+                    <input type="password" id="senha" name="senha" placeholder="Deixe em branco para manter a senha atual" />
                 </div>
-                <div>
-                    <strong>Matrícula:</strong>
-                    <p>FUNC-32145</p>
+
+                <div class="form-group">
+                    <label for="confirmaSenha">Confirmar Senha</label>
+                    <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Repita a nova senha" />
                 </div>
-                <div>
-                    <strong>Turno:</strong>
-                    <p>08:00 - 17:00</p>
+
+                <p id="mensagem-erro" class="page-note" style="color: #c62828; display: none;"></p>
+                <p id="mensagem-sucesso" class="page-note" style="color: #2e7d32; display: none;"></p>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="submit" class="button button-primary" id="btnSalvar" style="flex: 1;">Salvar Alterações</button>
+                    <button type="button" class="button button-secondary" id="btnCancelar" style="flex: 1;">Cancelar</button>
                 </div>
-                <div>
-                    <strong>Status:</strong>
-                    <p>Ativo</p>
-                </div>
-            </div>
+            </form>
         </section>
 
         <section class="info-card profile-card" style="margin-top: 24px;">
             <div class="profile-header">
-                <h2>Acesso Institucional</h2>
-                <p class="page-note">As informações abaixo são apenas um exemplo de como apresentar credenciais internas ao colaborador.</p>
+                <h2>Informações Adicionais</h2>
             </div>
             <div class="profile-list">
                 <div>
-                    <strong>Nível de acesso:</strong>
-                    <p>Operacional - Triagem &amp; Atendimento</p>
+                    <strong>Status:</strong>
+                    <p id="statusUsuario">Ativo</p>
                 </div>
                 <div>
-                    <strong>Último login:</strong>
-                    <p>27/05/2026 09:12</p>
-                </div>
-                <div>
-                    <strong>Supervisor:</strong>
-                    <p>Maria Oliveira</p>
-                </div>
-                <div>
-                    <strong>Área de suporte:</strong>
-                    <p>TI Clínica</p>
+                    <strong>Data de Cadastro:</strong>
+                    <p id="dataCadastro">--</p>
                 </div>
             </div>
         </section>
+    </main>
+
+    <footer>
+        <small>HCI Vitta © 2026 | Sistema de Gestão Clínica</small>
+    </footer>
+    <script src="../js/profile.js"></script>
+</body>
+</html>
+
     </main>
 
     <footer>

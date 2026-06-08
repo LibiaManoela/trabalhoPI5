@@ -2,6 +2,24 @@
 
 Este projeto implementa um sistema de triagem clínica assistida por inteligência artificial, utilizando um backend em Node.js para gerenciar requisições e uma API em Python para processar triagens médicas baseadas em sintomas descritos pelo usuário.
 
+## 🚀 QUICK START (Começo Rápido)
+
+### Rodar tudo em 1 comando:
+```bash
+cd "c:\Projetos Facul\trabalhoPI5"
+docker-compose up --build
+```
+
+**Aguarde ~30 segundos e acesse:**
+- 🌐 **Frontend**: http://localhost:5500/html/login.html (rodar em outro terminal: `cd frontend-chatAI/front && python -m http.server 5500`)
+- 🔌 **Backend API**: http://localhost:3000
+- 🎛️ **pgAdmin**: http://localhost:8080 (admin@pgadmin.org / 090106)
+- 🤖 **IA Engine**: http://localhost:5000
+
+**Para testar completo**: Veja [TESTING_GUIDE.md](TESTING_GUIDE.md) 📋
+
+---
+
 ## Descrição do Projeto
 
 O sistema permite que usuários descrevam sintomas clínicos e recebam uma triagem automatizada, incluindo classificação por protocolo de Manchester (vermelha, laranja, amarela, verde ou azul), justificativa e condutas iniciais. A IA utiliza um modelo de linguagem local (Mistral via Ollama), embeddings clínicos (BioBERTpt-clin) e um banco vetorial (ChromaDB) para recuperar casos similares históricos.

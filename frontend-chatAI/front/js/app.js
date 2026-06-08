@@ -17,6 +17,13 @@ function login() {
         return response.json();
     }).then((data)=>{
         if(data.isValid){
+            // Salvar dados do usuário no localStorage
+            localStorage.setItem('usuarioId', data.usuario.id);
+            localStorage.setItem('usuarioNome', data.usuario.nome);
+            localStorage.setItem('usuarioPerfil', data.usuario.perfil);
+            localStorage.setItem('usuarioUsername', data.usuario.username);
+            localStorage.setItem('usuarioRegistro', data.usuario.registro_profissional || '');
+            
             alert("Login bem-sucedido!");
             window.location.href = "dashboard.html";
         } else {

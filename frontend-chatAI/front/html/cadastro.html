@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/app.css">
+    <title>HCI Vitta | Cadastro de Usuários</title>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <a class="brand-link" href="dashboard.html">
+                <img class="brand-logo" src="../imagens/logo.jpeg" alt="HCI Vitta logo" />
+                <div class="brand-meta">
+                    <span class="brand-name">HCI Vitta</span>
+                    <span class="brand-slogan">Sistema de Gestão Clínica</span>
+                </div>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="dashboard.html">Painel Principal</a>
+            <a href="funcionarios.html">Equipe</a>
+            <a href="profile.html">Perfil</a>
+        </nav>
+        <div class="header-actions">
+            <a class="button button-secondary" href="dashboard.html">Voltar ao Painel</a>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <section class="page-title">
+            <p class="eyebrow">Administração</p>
+            <h1>Cadastro de Novo Funcionário</h1>
+            <p>Registre um novo profissional de saúde no sistema HCI Vitta.</p>
+        </section>
+
+        <section class="form-card">
+            <h2>Formulário de Cadastro</h2>
+            
+            <form id="cadastroForm">
+                <div class="form-group">
+                    <label for="nome">Nome Completo *</label>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: Dr. João Silva" required />
+                </div>
+
+                <div class="info-row" style="gap: 20px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="username">Identificação / Usuário *</label>
+                        <input type="text" id="username" name="username" placeholder="Ex: joao.silva" required />
+                    </div>
+
+                    <div class="form-group" style="flex: 1;">
+                        <label for="registro_profissional">COREN / CRM (Opcional)</label>
+                        <input type="text" id="registro_profissional" name="registro_profissional" placeholder="Ex: 123456/SP" />
+                    </div>
+                </div>
+
+                <div class="info-row" style="gap: 20px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="senha">Senha *</label>
+                        <input type="password" id="senha" name="senha" placeholder="Senha segura" required />
+                    </div>
+
+                    <div class="form-group" style="flex: 1;">
+                        <label for="confirmaSenha">Confirmar Senha *</label>
+                        <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Repita a senha" required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="perfil">Perfil / Cargo *</label>
+                    <select id="perfil" name="perfil" required>
+                        <option value="">Selecione um perfil</option>
+                        <option value="RECEPCIONISTA">Recepcionista</option>
+                        <option value="ENFERMEIRO">Enfermeiro</option>
+                        <option value="MEDICO">Médico</option>
+                        <option value="ADMINISTRADOR">Administrador</option>
+                    </select>
+                </div>
+
+                <p id="mensagem-erro" class="page-note" style="color: #c62828; display: none;"></p>
+                <p id="mensagem-sucesso" class="page-note" style="color: #2e7d32; display: none;"></p>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="submit" class="button button-primary" style="flex: 1;">Cadastrar Funcionário</button>
+                    <button type="reset" class="button button-secondary" style="flex: 1;">Limpar Formulário</button>
+                </div>
+            </form>
+
+            <p class="page-note" style="margin-top: 20px;">
+                <strong>Nota:</strong> A senha será criptografada no banco de dados. Forneça uma senha segura ao novo usuário.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <small>HCI Vitta © 2026 | Sistema de Gestão Clínica</small>
+    </footer>
+    <script src="../js/cadastro.js"></script>
+</body>
+</html>

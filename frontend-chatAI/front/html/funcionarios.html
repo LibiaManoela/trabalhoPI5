@@ -37,50 +37,35 @@
             <p>Confira os profissionais que atuam no fluxo de triagem, validação médica e apoio operacional.</p>
         </section>
 
+        <section style="margin-bottom: 24px; display: flex; justify-content: flex-end;">
+            <a class="button button-primary" href="cadastro.html">+ Novo Funcionário</a>
+        </section>
+
         <section class="table-card">
             <h2>Lista de Funcionários</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th>Cargo</th>
-                        <th>Setor</th>
-                        <th>Contato</th>
+                        <th>Perfil</th>
+                        <th>Usuário</th>
+                        <th>Registro Profissional</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="funcionariosTableBody">
                     <tr>
-                        <td>João Silva</td>
-                        <td>Assistente Administrativo</td>
-                        <td>Atendimento ao Paciente</td>
-                        <td>joao.silva@hcivitta.com.br</td>
-                    </tr>
-                    <tr>
-                        <td>Maria Oliveira</td>
-                        <td>Médica Responsável</td>
-                        <td>Clínica Médica</td>
-                        <td>maria.oliveira@hcivitta.com.br</td>
-                    </tr>
-                    <tr>
-                        <td>Lucas Ferreira</td>
-                        <td>Enfermeiro de Triagem</td>
-                        <td>Triagem de Urgência</td>
-                        <td>lucas.ferreira@hcivitta.com.br</td>
-                    </tr>
-                    <tr>
-                        <td>Fernanda Costa</td>
-                        <td>Coordenadora de Suporte</td>
-                        <td>Operações Clínicas</td>
-                        <td>fernanda.costa@hcivitta.com.br</td>
+                        <td colspan="5" style="text-align: center; color: #999;">Carregando funcionários...</td>
                     </tr>
                 </tbody>
             </table>
-            <p class="page-note">A lista acima é um exemplo de como apresentar as equipes de atendimento interno.</p>
         </section>
     </main>
+
 
     <footer>
         <small>HCI Vitta © 2026 | Gestão de Pessoas e Recursos Clínicos.</small>
     </footer>
+    <script src="../js/funcionarios.js"></script>
 </body>
 </html>
