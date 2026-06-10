@@ -117,6 +117,17 @@ app.post('/gemini-chat', async (req, res) => {
   }
 
   try {
+    // 1. Envia os dados para a API Python (ia_engine) via rede interna do Docker
+    const iaReq = await fetch('http://ia_engine:5000/triagem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sintomas: message })
+    });
+    
+    const iaData = await iaReq.json();
+    const diagnostico_ia = iaData.resposta_final || 'Erro ao gerar diagnóstico.';
+
+    // 2. Salva no banco de dados o resultado real da IA
     const result = await pool.query(
       `INSERT INTO triagens (usuario_id, nome_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -126,19 +137,20 @@ app.post('/gemini-chat', async (req, res) => {
         nome_paciente || 'Paciente não informado',
         idade_paciente ?? null,
         message,
-        'Aguardando validação médica',
-        'PENDENTE',
-        'PENDENTE',
+        diagnostico_ia, // Aqui salvamos o diagnóstico gerado
+        'PENDENTE', 
+        'PENDENTE', // Aguardando o médico em outro momento
       ]
     );
 
+    // 3. Devolve a resposta da IA para a tela do usuário
     return res.json({
-      reply: 'Triagem registrada com sucesso. A validação médica ficará disponível no histórico.',
+      reply: diagnostico_ia,
       triagem: result.rows[0],
     });
   } catch (error) {
     console.error('Erro ao gravar triagem via gemini-chat:', error);
-    return res.status(500).json({ error: 'Erro ao salvar a triagem.' });
+    return res.status(500).json({ error: 'Erro ao processar a triagem com a IA.' });
   }
 });
 

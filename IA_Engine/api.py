@@ -2,7 +2,7 @@ import os
 import torch
 
 # Desativa o aviso de vulnerabilidade de carregamento de pesos
-torch.serialization.add_safe_globals([set])
+#torch.serialization.add_safe_globals([set])
 
 # Evita conflitos de implementação do Protobuf
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
@@ -20,7 +20,6 @@ import torch
 import chromadb
 from transformers import AutoTokenizer, AutoModel
 
-import nest_asyncio
 import asyncio
 
 from llama_index.core.llms import ChatMessage
@@ -28,14 +27,6 @@ from llama_index.llms.ollama import Ollama
 from llama_index.core import Settings
 
 from fastapi import FastAPI
-
-# -----------------------------
-# Async fix
-# -----------------------------
-try:
-    asyncio.get_running_loop()
-except RuntimeError:
-    nest_asyncio.apply()
 
 # -----------------------------
 # Config
@@ -356,4 +347,4 @@ async def triagem(data: dict):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=5000)
