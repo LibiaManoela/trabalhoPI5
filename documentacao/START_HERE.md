@@ -7,6 +7,7 @@ Este projeto utiliza **Docker** e **Docker Compose** para orquestrar e rodar tod
 ## 🛠️ Pré-requisitos
 
 Antes de iniciar, você precisa ter instalado no seu computador:
+
 1. [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Certifique-se de que ele está aberto e rodando).
 2. [Git](https://git-scm.com/) (Para clonar o repositório).
 
@@ -21,10 +22,11 @@ Antes de iniciar, você precisa ter instalado no seu computador:
    * **Via comando direto:** `docker-compose up --build`
 
 O Docker irá construir os ambientes e subir os seguintes serviços:
-* **Módulo Web / Backend (Node.js):** http://localhost:3000
-* **Motor de Inteligência Artificial (Python / RAG):** http://localhost:5000
+
+* **Módulo Web / Backend (Node.js):** <http://localhost:3000>
+* **Motor de Inteligência Artificial (Python / RAG):** <http://localhost:5000>
 * **Banco de Dados (PostgreSQL):** Porta `5432`
-* **Gerenciador do Banco (pgAdmin 4):** http://localhost:8080
+* **Gerenciador do Banco (pgAdmin 4):** <http://localhost:8080>
 
 ---
 
