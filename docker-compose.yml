@@ -38,6 +38,7 @@ services:
       - DATABASE_URL=postgresql://postgres:090106@database:5432/hcivitta_db
     volumes:
       - ./IA_Engine/chroma_db:/app/chroma_db
+      - ./documentos:/documentos
     depends_on:
       - database
     networks:

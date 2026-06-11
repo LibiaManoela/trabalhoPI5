@@ -161,8 +161,13 @@ def extract_keywords_for_rerank(text: str) -> List[str]:
     return found
 
 def rerank_pairs_hybrid(new_case_text: str, pairs_sorted_by_dist: List[Tuple[str, float]]) -> List[Tuple[str, float]]:
-    keywords = extract_keywords_for_rerank(new_case_text)
+    # Proteção 1: Se a lista de pares estiver vazia, não faz nada
+    if not pairs_sorted_by_dist:
+        return []
 
+    keywords = extract_keywords_for_rerank(new_case_text)
+    
+    # Proteção 2: Se não achar palavras-chave, mantém como está
     if not keywords:
         return pairs_sorted_by_dist
 
@@ -170,6 +175,7 @@ def rerank_pairs_hybrid(new_case_text: str, pairs_sorted_by_dist: List[Tuple[str
         ct = case_text.lower()
         return sum(1 for k in keywords if k in ct)
 
+    # Agora o max() é 100% seguro pois sabemos que a lista não é vazia
     best = max(
         pairs_sorted_by_dist,
         key=lambda x: (keyword_score(x[0]), -float(x[1]) if x[1] is not None else float("-inf"))
@@ -231,30 +237,36 @@ def perform_triagem(sintomas: str) -> str:
             include=["metadatas", "distances"]
         )
 
-        raw_similar_cases = [m["content"] for m in results["metadatas"][0]]
-        raw_distances = results.get("distances", [[None] * len(raw_similar_cases)])[0]
+        # Variáveis padrão (Escudo caso o BD esteja vazio)
+        similar_cases = []
+        distances = []
+        best_case = "Nenhum caso histórico encontrado na base."
+        best_dist = "N/A"
+        other_cases_text = "- (nenhum)\n"
 
-        pairs: List[Tuple[str, float]] = list(zip(raw_similar_cases, raw_distances))
-        pairs_sorted = sorted(
-            pairs,
-            key=lambda x: float(x[1]) if x[1] is not None else float("inf")
-        )
+        # Só tenta buscar os metadados se eles realmente existirem
+        if results.get("metadatas") and results["metadatas"][0]:
+            raw_similar_cases = [m["content"] for m in results["metadatas"][0]]
+            raw_distances = results.get("distances", [[None] * len(raw_similar_cases)])[0]
 
-        pairs_sorted = rerank_pairs_hybrid(sintomas, pairs_sorted)
+            pairs: List[Tuple[str, float]] = list(zip(raw_similar_cases, raw_distances))
+            pairs_sorted = sorted(
+                pairs,
+                key=lambda x: float(x[1]) if x[1] is not None else float("inf")
+            )
 
-        similar_cases = [c for (c, d) in pairs_sorted]
-        distances = [d for (c, d) in pairs_sorted]
+            pairs_sorted = rerank_pairs_hybrid(sintomas, pairs_sorted)
 
-        best_case = similar_cases[0] if similar_cases else ""
-        best_dist = distances[0] if distances else None
+            if pairs_sorted:
+                similar_cases = [c for (c, d) in pairs_sorted]
+                distances = [d for (c, d) in pairs_sorted]
+                best_case = similar_cases[0]
+                best_dist = distances[0]
 
-        other_cases = similar_cases[1:] if len(similar_cases) > 1 else []
-        other_dists = distances[1:] if len(distances) > 1 else []
-
-        other_cases_text = (
-            "\n".join([f"- dist={d}\n  {c}" for c, d in zip(other_cases, other_dists)])
-            if other_cases else "- (nenhum)\n"
-        )
+                if len(similar_cases) > 1:
+                    other_cases = similar_cases[1:]
+                    other_dists = distances[1:]
+                    other_cases_text = "\n".join([f"- dist={d}\n  {c}" for c, d in zip(other_cases, other_dists)])
 
         input_text = (
             "NOVO CASO (use como fonte principal; NÃO invente sintomas):\n"
