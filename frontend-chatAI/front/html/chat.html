@@ -37,19 +37,16 @@
             <p>Insira detalhadamente a anamnese, os sinais vitais e os sintomas relatados pelo paciente para obter a sugestão de diagnóstico e a sua classificação de risco.</p>
         </section>
 
-        <section class="form-card">
+        <section class="form-card chat-layout">
             <h2>Prontuário de Triagem Instantânea</h2>
-            <div class="info-row" style="margin-bottom: 22px;">
-                <div class="info-card accent-card">
-                    <h3>Coleta Baseada em Evidências</h3>
-                    <p>O motor de IA analisará os sintomas inseridos cruzando-os com as diretrizes clínicas integradas na base corporativa.</p>
-                </div>
-                <div id="chat-container" class="result-panel">
-                    <h3>Diagnóstico Preditivo</h3>
-                    <p class="page-note">Os resultados da IA aparecerão aqui após o processamento.</p>
-                </div>
+            <div id="chat-container" class="result-panel">
+                <h3>Resultado da IA</h3>
+                <p class="page-note">A resposta do paciente e o diagnóstico de risco aparecerão aqui assim que o processamento for concluído.</p>
             </div>
-
+            <div class="info-card accent-card">
+                <h3>Coleta Baseada em Evidências</h3>
+                <p>O motor de IA analisa os dados informados com base nas diretrizes clínicas para oferecer suporte de decisão. Descreva o quadro clínico do paciente de forma clara para melhorar a precisão da sugestão.</p>
+            </div>
             <div class="form-group">
                 <label for="mensagem-input">Sintomas, Queixas e Parâmetros Clínicos</label>
                 <textarea id="mensagem-input" rows="4" placeholder="Ex: Paciente masculino, 45 anos, dor torácica irradiando para o braço esquerdo, PA 150/90..."></textarea>
