@@ -13,7 +13,12 @@ function formatDate(dateString) {
 
 async function carregarTriagens() {
     try {
-        const response = await fetch(`${BACKEND_URL}/triagens`);
+        const usuarioId = localStorage.getItem('usuarioId');
+        const response = await fetch(`${BACKEND_URL}/triagens`, {
+            headers: {
+                'x-usuario-id': usuarioId,
+            },
+        });
         if (!response.ok) {
             throw new Error('Erro ao buscar triagens.');
         }
@@ -26,12 +31,34 @@ async function carregarTriagens() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
+function exibirAcessoNegado(message) {
     const corpoTabelaTransacoes = document.getElementById('corpoTabelaTransacoes');
     const mensagemSemTransacoes = document.getElementById('mensagem-sem-transacoes');
     const totalSpan = document.getElementById('totalTransacoes');
 
+    if (corpoTabelaTransacoes) {
+        corpoTabelaTransacoes.innerHTML = `\n            <tr>\n                <td colspan="3" style="text-align: center; color: #c62828;">${message}</td>\n            </tr>\n        `;
+    }
+    if (mensagemSemTransacoes) {
+        mensagemSemTransacoes.style.display = 'none';
+    }
+    if (totalSpan) {
+        totalSpan.textContent = '0';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+    const corpoTabelaTransacoes = document.getElementById('corpoTabelaTransacoes');
+    const mensagemSemTransacoes = document.getElementById('mensagem-sem-transacoes');
+    const totalSpan = document.getElementById('totalTransacoes');
+    const usuarioPerfil = localStorage.getItem('usuarioPerfil');
+
     if (!corpoTabelaTransacoes || !mensagemSemTransacoes || !totalSpan) {
+        return;
+    }
+
+    if (usuarioPerfil !== 'ADMINISTRADOR') {
+        exibirAcessoNegado('Acesso negado: somente administradores podem visualizar o histórico completo de processos.');
         return;
     }
 

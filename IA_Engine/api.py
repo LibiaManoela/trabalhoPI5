@@ -14,6 +14,7 @@ import os
 import hashlib
 import re
 import warnings
+import logging
 warnings.filterwarnings("ignore", category=UserWarning)
 
 import torch
@@ -27,6 +28,9 @@ from llama_index.llms.ollama import Ollama
 from llama_index.core import Settings
 
 from fastapi import FastAPI
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # -----------------------------
 # Config
@@ -149,8 +153,8 @@ def extract_keywords_for_rerank(text: str) -> List[str]:
         "confusão", "inconsciência", "desmaio", "convulsão",
         "hemorragia", "sangramento",
         "pa ", "pressão", "hipotensão", "hipertensão",
-        "infarto", "iam", "avc", "sepse"
-        "glicemia", "pressão alta", "TSH", "tontura", "palpitação"
+        "infarto", "iam", "avc", "sepse",
+        "glicemia", "pressão alta", "tsh", "tontura", "palpitação"
     ]
 
     found = []
@@ -159,6 +163,37 @@ def extract_keywords_for_rerank(text: str) -> List[str]:
             found.append(term)
 
     return found
+
+
+def validate_triagem_response(answer_text: str) -> Tuple[bool, str]:
+    if not answer_text or not answer_text.strip():
+        return False, "Resposta vazia do modelo."
+
+    lower = answer_text.lower()
+    if looks_english(answer_text):
+        return False, "Resposta em inglês detectada."
+
+    required_sections = ["classificação", "justificativa", "condutas"]
+    missing = [section for section in required_sections if section not in lower]
+    if missing:
+        return False, f"Resposta incompleta ou sem as seções esperadas: {', '.join(missing)}."
+
+    if len(answer_text.split()) < 30:
+        return False, "Resposta muito curta para uma análise clínica adequada."
+
+    if "novo caso" in lower and "caso mais próximo" in lower:
+        return False, "Resposta parece estar repetindo o prompt em vez de gerar a análise."
+
+    return True, ""
+
+
+def clean_triagem_input(sintomas: str) -> str:
+    if sintomas is None:
+        return ""
+    cleaned = sintomas.strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    return cleaned
+
 
 def rerank_pairs_hybrid(new_case_text: str, pairs_sorted_by_dist: List[Tuple[str, float]]) -> List[Tuple[str, float]]:
     # Proteção 1: Se a lista de pares estiver vazia, não faz nada
@@ -225,7 +260,8 @@ if triagem_cases:
 # Triage function
 # -----------------------------
 def perform_triagem(sintomas: str) -> str:
-    if not sintomas.strip():
+    sintomas = clean_triagem_input(sintomas)
+    if not sintomas:
         return "Sintomas não fornecidos."
 
     try:
@@ -237,27 +273,25 @@ def perform_triagem(sintomas: str) -> str:
             include=["metadatas", "distances"]
         )
 
-        # Variáveis padrão (Escudo caso o BD esteja vazio)
         similar_cases = []
         distances = []
         best_case = "Nenhum caso histórico encontrado na base."
         best_dist = "N/A"
         other_cases_text = "- (nenhum)\n"
 
-        # Só tenta buscar os metadados se eles realmente existirem
         if results.get("metadatas") and results["metadatas"][0]:
-            raw_similar_cases = [m["content"] for m in results["metadatas"][0]]
+            raw_similar_cases = [m["content"] for m in results["metadatas"][0] if isinstance(m, dict) and "content" in m]
             raw_distances = results.get("distances", [[None] * len(raw_similar_cases)])[0]
 
-            pairs: List[Tuple[str, float]] = list(zip(raw_similar_cases, raw_distances))
-            pairs_sorted = sorted(
-                pairs,
-                key=lambda x: float(x[1]) if x[1] is not None else float("inf")
-            )
+            pairs: List[Tuple[str, float]] = [
+                (case_text, dist) for case_text, dist in zip(raw_similar_cases, raw_distances)
+                if case_text and dist is not None
+            ]
 
-            pairs_sorted = rerank_pairs_hybrid(sintomas, pairs_sorted)
+            if pairs:
+                pairs_sorted = sorted(pairs, key=lambda x: float(x[1]))
+                pairs_sorted = rerank_pairs_hybrid(sintomas, pairs_sorted)
 
-            if pairs_sorted:
                 similar_cases = [c for (c, d) in pairs_sorted]
                 distances = [d for (c, d) in pairs_sorted]
                 best_case = similar_cases[0]
@@ -268,6 +302,8 @@ def perform_triagem(sintomas: str) -> str:
                     other_dists = distances[1:]
                     other_cases_text = "\n".join([f"- dist={d}\n  {c}" for c, d in zip(other_cases, other_dists)])
 
+        contexto_texto = "\n".join([f"- {c}" for c in similar_cases]) if similar_cases else "- (nenhum)"
+
         input_text = (
             "NOVO CASO (use como fonte principal; NÃO invente sintomas):\n"
             f"{sintomas}\n\n"
@@ -276,9 +312,8 @@ def perform_triagem(sintomas: str) -> str:
             f"- {best_case}\n\n"
             "OUTROS CASOS PRÓXIMOS (apenas apoio; podem conflitar):\n"
             f"{other_cases_text}"
-            "SINTOMAS DO PACIENTE ATUAL:\n"
             "CONTEXTO RECUPERADO (Casos Históricos e Diretrizes Técnicas):\n"
-            f"{similar_cases}\n\n"
+            f"{contexto_texto}\n\n"
             "INSTRUÇÃO:\n"
             "Se o contexto contiver diretrizes técnicas, use-as para sugerir a conduta.\n"
             "Se contiver casos parecidos, use-os para confirmar o diagnóstico.\n\n"
@@ -325,14 +360,16 @@ def perform_triagem(sintomas: str) -> str:
         resposta = llm.chat(messages)
         answer_text = (resposta.message.content or "").strip()
 
-        if looks_english(answer_text):
+        valid, validation_message = validate_triagem_response(answer_text)
+        if not valid:
+            logger.warning("Resposta inválida do modelo: %s", validation_message)
             retry_messages = [
                 ChatMessage(
                     role="system",
                     content=(
                         system_prompt
                         + "\nATENÇÃO EXTRA: Você DEVE responder somente em PT-BR. "
-                          "Se você responder em outro idioma, a resposta será considerada inválida.\n"
+                          "Responda de forma completa em 3 seções claramente rotuladas.\n"
                     ),
                 ),
                 ChatMessage(role="user", content=input_text),
@@ -340,10 +377,19 @@ def perform_triagem(sintomas: str) -> str:
             ]
             resposta2 = llm.chat(retry_messages)
             answer_text = (resposta2.message.content or "").strip()
+            valid, validation_message = validate_triagem_response(answer_text)
+
+        if not valid:
+            logger.error("Falha ao gerar resposta válida do modelo: %s", validation_message)
+            return (
+                "Erro: não foi possível gerar uma resposta de triagem segura e formatada. "
+                "Por favor, revise os sintomas e tente novamente."
+            )
 
         return answer_text
 
     except Exception as e:
+        logger.exception("Erro ao processar triagem")
         return f"Erro ao processar triagem: {e}"
 
 # -----------------------------

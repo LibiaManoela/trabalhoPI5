@@ -5,6 +5,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const mensagemErro = document.getElementById('mensagem-erro');
     const mensagemSucesso = document.getElementById('mensagem-sucesso');
 
+    const usuarioId = localStorage.getItem('usuarioId');
+    const usuarioPerfil = localStorage.getItem('usuarioPerfil');
+
+    if (usuarioPerfil !== 'ADMINISTRADOR') {
+        mensagemErro.textContent = 'Acesso negado: somente administradores podem cadastrar novos usuários.';
+        mensagemErro.style.display = 'block';
+        if (cadastroForm) {
+            cadastroForm.style.display = 'none';
+        }
+        return;
+    }
+
     if (cadastroForm) {
         cadastroForm.addEventListener('submit', async function (event) {
             event.preventDefault();
@@ -16,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const perfil = document.getElementById('perfil').value;
             const registro_profissional = document.getElementById('registro_profissional').value.trim() || null;
 
-            // Validação do lado do cliente
             if (!nome || !username || !senha || !perfil) {
                 mensagemErro.textContent = 'Preencha todos os campos obrigatórios.';
                 mensagemErro.style.display = 'block';
@@ -43,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-usuario-id': usuarioId,
                     },
                     body: JSON.stringify({
                         nome,
@@ -64,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 mensagemErro.style.display = 'none';
                 cadastroForm.reset();
 
-                // Redireciona após 2 segundos
                 setTimeout(() => {
                     window.location.href = 'funcionarios.html';
                 }, 2000);

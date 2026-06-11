@@ -27,7 +27,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Carregar dados do usuário
     try {
-        const response = await fetch(`${BACKEND_URL}/usuarios/${usuarioId}`);
+        const response = await fetch(`${BACKEND_URL}/usuarios/${usuarioId}`, {
+            headers: {
+                'x-usuario-id': usuarioId,
+            },
+        });
         
         if (!response.ok) {
             throw new Error('Erro ao buscar dados do usuário.');
@@ -100,6 +104,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-usuario-id': usuarioId,
                     },
                     body: JSON.stringify(body),
                 });

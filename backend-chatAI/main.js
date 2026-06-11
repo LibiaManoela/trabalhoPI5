@@ -25,6 +25,56 @@ function isBcryptHash(value) {
   return typeof value === 'string' && value.startsWith('$2');
 }
 
+function parseRequesterUserId(req) {
+  const raw = req.headers['x-usuario-id'] || req.body.usuario_id || req.query.usuario_id;
+  const id = Number(raw);
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+async function getUserById(userId) {
+  const result = await pool.query('SELECT id, perfil, ativo FROM usuarios WHERE id = $1', [userId]);
+  return result.rows[0] || null;
+}
+
+async function requireAdmin(req, res, next) {
+  const requesterId = parseRequesterUserId(req);
+  if (!requesterId) {
+    return res.status(401).json({ error: 'ID do usuário solicitante obrigatório.' });
+  }
+
+  const usuario = await getUserById(requesterId);
+  if (!usuario || !usuario.ativo) {
+    return res.status(403).json({ error: 'Usuário não encontrado ou inativo.' });
+  }
+
+  if (usuario.perfil !== 'ADMINISTRADOR') {
+    return res.status(403).json({ error: 'Acesso negado: administrador requerido.' });
+  }
+
+  req.requesterUser = usuario;
+  next();
+}
+
+async function requireSelfOrAdmin(req, res, next) {
+  const requesterId = parseRequesterUserId(req);
+  if (!requesterId) {
+    return res.status(401).json({ error: 'ID do usuário solicitante obrigatório.' });
+  }
+
+  const usuario = await getUserById(requesterId);
+  if (!usuario || !usuario.ativo) {
+    return res.status(403).json({ error: 'Usuário não encontrado ou inativo.' });
+  }
+
+  const targetId = Number(req.params.id);
+  if (usuario.perfil === 'ADMINISTRADOR' || requesterId === targetId) {
+    req.requesterUser = usuario;
+    next();
+  } else {
+    return res.status(403).json({ error: 'Acesso negado: apenas administrador ou usuário dono do recurso.' });
+  }
+}
+
 app.get('/', (_req, res) => {
   res.send('Servidor ativo!');
 });
@@ -154,7 +204,7 @@ app.post('/gemini-chat', async (req, res) => {
   }
 });
 
-app.get('/triagens', async (_req, res) => {
+app.get('/triagens', requireAdmin, async (_req, res) => {
   try {
     const result = await pool.query(
       `SELECT t.*, u.nome AS usuario_nome, u.perfil AS usuario_perfil
@@ -170,7 +220,7 @@ app.get('/triagens', async (_req, res) => {
   }
 });
 
-app.get('/triagens/:id', async (req, res) => {
+app.get('/triagens/:id', requireAdmin, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT t.*, u.nome AS usuario_nome, u.perfil AS usuario_perfil
@@ -191,7 +241,7 @@ app.get('/triagens/:id', async (req, res) => {
   }
 });
 
-app.post('/triagens/:id/validacao', async (req, res) => {
+app.post('/triagens/:id/validacao', requireAdmin, async (req, res) => {
   const { medico_id, aprovado, diagnostico_correto, observacoes_clinicas } = req.body;
 
   if (typeof aprovado !== 'boolean' || !medico_id) {
@@ -220,7 +270,7 @@ app.post('/triagens/:id/validacao', async (req, res) => {
   }
 });
 
-app.get('/usuarios', async (_req, res) => {
+app.get('/usuarios', requireAdmin, async (_req, res) => {
   try {
     const result = await pool.query('SELECT id, nome, username, perfil, registro_profissional, ativo FROM usuarios ORDER BY nome');
     return res.json(result.rows);
@@ -230,7 +280,7 @@ app.get('/usuarios', async (_req, res) => {
   }
 });
 
-app.post('/usuarios', async (req, res) => {
+app.post('/usuarios', requireAdmin, async (req, res) => {
   const { nome, username, senha, perfil, registro_profissional } = req.body;
 
   if (!nome || !username || !senha || !perfil) {
@@ -257,7 +307,7 @@ app.post('/usuarios', async (req, res) => {
   }
 });
 
-app.put('/usuarios/:id', async (req, res) => {
+app.put('/usuarios/:id', requireSelfOrAdmin, async (req, res) => {
   const { nome, senha, perfil, registro_profissional } = req.body;
   const usuarioId = Number(req.params.id);
 
@@ -316,7 +366,7 @@ app.put('/usuarios/:id', async (req, res) => {
   }
 });
 
-app.get('/usuarios/:id', async (req, res) => {
+app.get('/usuarios/:id', requireSelfOrAdmin, async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, nome, username, perfil, registro_profissional, ativo, criado_em FROM usuarios WHERE id = $1',
@@ -331,6 +381,31 @@ app.get('/usuarios/:id', async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar usuário:', error);
     return res.status(500).json({ error: 'Erro ao buscar usuário.' });
+  }
+});
+
+app.delete('/usuarios/:id', requireAdmin, async (req, res) => {
+  const usuarioId = Number(req.params.id);
+  const requesterId = parseRequesterUserId(req);
+
+  if (usuarioId === requesterId) {
+    return res.status(400).json({ error: 'Administrador não pode excluir sua própria conta.' });
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE usuarios SET ativo = FALSE WHERE id = $1 RETURNING id, nome, username, perfil, registro_profissional, ativo',
+      [usuarioId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    return res.json({ usuario: result.rows[0] });
+  } catch (error) {
+    console.error('Erro ao excluir usuário:', error);
+    return res.status(500).json({ error: 'Erro ao excluir usuário.' });
   }
 });
 
