@@ -159,7 +159,7 @@ app.post('/triagem', async (req, res) => {
   }
 });
 
-app.post('/gemini-chat', async (req, res) => {
+app.post('/minhaIA-chat', async (req, res) => {
   const { message, usuario_id, nome_paciente, idade_paciente } = req.body;
 
   if (!message) {
@@ -199,7 +199,7 @@ app.post('/gemini-chat', async (req, res) => {
       triagem: result.rows[0],
     });
   } catch (error) {
-    console.error('Erro ao gravar triagem via gemini-chat:', error);
+    console.error('Erro ao gravar triagem via minhaIA-chat:', error);
     return res.status(500).json({ error: 'Erro ao processar a triagem com a IA.' });
   }
 });

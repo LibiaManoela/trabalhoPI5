@@ -61,7 +61,7 @@ async function enviarMensagemDoUsuario() {
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     try {
-      const response = await fetch(`${BACKEND_URL}/gemini-chat`, {
+      const response = await fetch(`${BACKEND_URL}/minhaIA-chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: texto }),

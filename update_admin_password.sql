@@ -1,0 +1,1 @@
+UPDATE public.usuarios SET senha_hash = '$2b$12$XTO0u4A6c9ScjTdvGXGR5.x29VytIAhcLvxyU8SOqGCtXNwlekfWu' WHERE username = 'admin';

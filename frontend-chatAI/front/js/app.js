@@ -32,6 +32,19 @@ function login() {
     })
 }
 
+// Função de logout
+function logout() {
+    // Limpar localStorage
+    localStorage.removeItem('usuarioId');
+    localStorage.removeItem('usuarioNome');
+    localStorage.removeItem('usuarioPerfil');
+    localStorage.removeItem('usuarioUsername');
+    localStorage.removeItem('usuarioRegistro');
+    
+    // Redirecionar para login
+    window.location.href = 'login.html';
+}
+
 // fechar mensagem dos cookies na HomePage
 function cookies(){
     const cookies = document.getElementById('cookies')
