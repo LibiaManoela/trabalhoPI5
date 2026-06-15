@@ -62,6 +62,17 @@ services:
     networks:
       - hcivitta_network
 
+  # 5. Front-end 
+  frontend:
+    image: nginx:alpine
+    container_name: hcivitta_frontend
+    ports:
+      - "5500:80"
+    volumes:
+      - ./frontend-chatAI/front:/usr/share/nginx/html:ro
+    networks:
+      - hcivitta_network
+
 volumes:
   postgres_data:
 
