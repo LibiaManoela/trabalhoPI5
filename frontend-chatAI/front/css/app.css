@@ -275,6 +275,9 @@ header {
     padding: 28px;
     border: 1px solid rgba(37, 150, 190, 0.22);
     background: linear-gradient(180deg, rgba(244, 255, 255, 0.96), rgba(232, 246, 255, 0.98));
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .chat-layout .result-panel h3 {
@@ -282,7 +285,106 @@ header {
     font-size: 1.4rem;
 }
 
-.chat-layout .info-card {
+.mensagem-box {
+    border-radius: 22px;
+    padding: 18px;
+    margin-bottom: 16px;
+    max-width: 100%;
+    box-shadow: 0 16px 40px rgba(10, 32, 82, 0.08);
+    border: 1px solid rgba(37, 150, 190, 0.13);
+    display: grid;
+    gap: 10px;
+}
+
+.mensagem-header {
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+}
+
+.mensagem-body {
+    font-size: 1rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    color: var(--blue-dark);
+}
+
+.mensagem-usuario {
+    background: rgba(255, 255, 255, 0.96);
+    border-left: 5px solid var(--blue-dark);
+}
+
+.mensagem-ia {
+    background: rgba(232, 246, 255, 0.95);
+    border-left: 5px solid var(--blue-light);
+}
+
+.mensagem-ia-notice {
+    padding: 14px;
+    border-radius: 16px;
+    background: #fff4e0;
+    color: #7a4e0a;
+    border: 1px solid #ffe4b3;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.status-cell {
+    font-weight: 700;
+    color: var(--blue-dark);
+}
+
+.status-cell::before {
+    content: '• ';
+}
+
+.table-card table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.95);
+}
+
+.table-card th,
+.table-card td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(37, 150, 190, 0.12);
+}
+
+.table-card th {
+    background: rgba(37, 150, 190, 0.12);
+    color: var(--blue-dark);
+    font-weight: 700;
+    text-align: left;
+}
+
+.table-card tr:nth-child(even) {
+    background: rgba(232, 246, 255, 0.6);
+}
+
+.table-card td {
+    color: rgba(10, 32, 82, 0.82);
+}
+
+.table-card td.status-cell {
+    color: var(--blue-light);
+}
+
+.chat-layout .form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.chat-layout textarea {
+    width: 100%;
+    border-radius: 18px;
+    border: 1px solid rgba(37, 150, 190, 0.24);
+    padding: 18px;
+    min-height: 130px;
+    resize: vertical;
+    font-size: 1rem;
+    line-height: 1.6;
+}
     max-width: 100%;
 }
 

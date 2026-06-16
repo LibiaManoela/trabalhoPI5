@@ -51,7 +51,7 @@ def load_llm():
     # Em Docker no Windows, use localhost:11434 para acessar Ollama do host
     # Em localhost direto, use localhost:11434
     ollama_host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
-    llm = Ollama(model="neural-chat", base_url=ollama_host, request_timeout=420.0)
+    llm = Ollama(model="mistral", base_url=ollama_host, request_timeout=420.0)
     Settings.llm = llm
     return llm
 

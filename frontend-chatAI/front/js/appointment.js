@@ -15,7 +15,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     try {
-        const response = await fetch(`${BACKEND_URL}/triagens`);
+        const response = await fetch(`${BACKEND_URL}/triagens`, {
+            headers: {
+                'x-usuario-id': usuarioId,
+            },
+        });
         
         if (!response.ok) {
             throw new Error('Erro ao buscar triagens.');

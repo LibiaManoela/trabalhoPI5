@@ -75,6 +75,25 @@ async function requireSelfOrAdmin(req, res, next) {
   }
 }
 
+async function requireMedicoOrAdmin(req, res, next) {
+  const requesterId = parseRequesterUserId(req);
+  if (!requesterId) {
+    return res.status(401).json({ error: 'ID do usuário solicitante obrigatório.' });
+  }
+
+  const usuario = await getUserById(requesterId);
+  if (!usuario || !usuario.ativo) {
+    return res.status(403).json({ error: 'Usuário não encontrado ou inativo.' });
+  }
+
+  if (usuario.perfil !== 'MEDICO' && usuario.perfil !== 'ADMINISTRADOR') {
+    return res.status(403).json({ error: 'Acesso negado: apenas médico ou administrador.' });
+  }
+
+  req.requesterUser = usuario;
+  next();
+}
+
 app.get('/', (_req, res) => {
   res.send('Servidor ativo!');
 });
@@ -127,6 +146,7 @@ app.post('/triagem', async (req, res) => {
   const {
     usuario_id,
     nome_paciente,
+    cpf,
     idade_paciente,
     dados_anamnese,
     diagnostico_ia,
@@ -134,18 +154,19 @@ app.post('/triagem', async (req, res) => {
     status,
   } = req.body;
 
-  if (!dados_anamnese) {
-    return res.status(400).json({ error: 'Dados de anamnese são obrigatórios.' });
+  if (!dados_anamnese || !nome_paciente || !cpf || !idade_paciente) {
+    return res.status(400).json({ error: 'CPF, nome, idade e dados de anamnese são obrigatórios.' });
   }
 
   try {
     const result = await pool.query(
-      `INSERT INTO triagens (usuario_id, nome_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
       [
         usuario_id || null,
-        nome_paciente || 'Paciente não informado',
+        nome_paciente,
+        cpf,
         idade_paciente ?? null,
         dados_anamnese,
         diagnostico_ia || 'Aguardando validação médica',
@@ -162,40 +183,38 @@ app.post('/triagem', async (req, res) => {
 });
 
 app.post('/minhaIA-chat', async (req, res) => {
-  const { message, usuario_id, nome_paciente, idade_paciente } = req.body;
+  const { message, usuario_id, nome_paciente, idade_paciente, cpf } = req.body;
 
-  if (!message) {
-    return res.status(400).json({ error: 'Texto da triagem é obrigatório.' });
+  if (!message || !nome_paciente || !idade_paciente || !cpf) {
+    return res.status(400).json({ error: 'CPF, nome, idade e sintomas são obrigatórios para a triagem.' });
   }
 
   try {
-    // 1. Envia os dados para a API Python (ia_engine) via rede interna do Docker
     const iaReq = await fetch('http://ia_engine:5000/triagem', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sintomas: message })
     });
-    
+
     const iaData = await iaReq.json();
     const diagnostico_ia = iaData.resposta_final || 'Erro ao gerar diagnóstico.';
 
-    // 2. Salva no banco de dados o resultado real da IA
     const result = await pool.query(
-      `INSERT INTO triagens (usuario_id, nome_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
       [
         usuario_id || null,
-        nome_paciente || 'Paciente não informado',
+        nome_paciente,
+        cpf,
         idade_paciente ?? null,
         message,
-        diagnostico_ia, // Aqui salvamos o diagnóstico gerado
-        'PENDENTE', 
-        'PENDENTE', // Aguardando o médico em outro momento
+        diagnostico_ia,
+        'PENDENTE',
+        'PENDENTE',
       ]
     );
 
-    // 3. Devolve a resposta da IA para a tela do usuário
     return res.json({
       reply: diagnostico_ia,
       triagem: result.rows[0],
@@ -206,7 +225,7 @@ app.post('/minhaIA-chat', async (req, res) => {
   }
 });
 
-app.get('/triagens', requireAdmin, async (_req, res) => {
+app.get('/triagens', requireMedicoOrAdmin, async (_req, res) => {
   try {
     const result = await pool.query(
       `SELECT t.*, u.nome AS usuario_nome, u.perfil AS usuario_perfil
@@ -222,7 +241,7 @@ app.get('/triagens', requireAdmin, async (_req, res) => {
   }
 });
 
-app.get('/triagens/:id', requireAdmin, async (req, res) => {
+app.get('/triagens/:id', requireMedicoOrAdmin, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT t.*, u.nome AS usuario_nome, u.perfil AS usuario_perfil
@@ -243,7 +262,7 @@ app.get('/triagens/:id', requireAdmin, async (req, res) => {
   }
 });
 
-app.post('/triagens/:id/validacao', requireAdmin, async (req, res) => {
+app.post('/triagens/:id/validacao', requireMedicoOrAdmin, async (req, res) => {
   const { medico_id, aprovado, diagnostico_correto, observacoes_clinicas } = req.body;
 
   if (typeof aprovado !== 'boolean' || !medico_id) {

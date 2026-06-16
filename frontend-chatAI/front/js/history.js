@@ -77,13 +77,23 @@ document.addEventListener('DOMContentLoaded', async function () {
         const cellData = row.insertCell();
         cellData.textContent = formatDate(triagem.criado_em);
 
-        const cellEvento = row.insertCell();
-        cellEvento.textContent = `${triagem.nome_paciente || 'Paciente desconhecido'} — ${triagem.status}`;
+        const cellPaciente = row.insertCell();
+        cellPaciente.textContent = triagem.nome_paciente || 'Não informado';
+
+        const cellCpf = row.insertCell();
+        cellCpf.textContent = triagem.cpf || '-';
+
+        const cellProfissional = row.insertCell();
+        cellProfissional.textContent = triagem.usuario_nome || 'Não identificado';
+
+        const cellStatus = row.insertCell();
+        cellStatus.textContent = triagem.status || 'PENDENTE';
+        cellStatus.classList.add('status-cell');
 
         const cellDetalhes = row.insertCell();
-        cellDetalhes.innerHTML = `IA: ${triagem.diagnostico_ia || 'Sem diagnóstico'}<br>
-            Risco: ${triagem.classificacao_risco || 'Não informado'}<br>
-            Profissional: ${triagem.usuario_nome || 'Não identificado'}`;
+        cellDetalhes.innerHTML = `Idade: ${triagem.idade_paciente ?? '-'} anos<br>
+            IA: ${triagem.diagnostico_ia || 'Sem diagnóstico'}<br>
+            Risco: ${triagem.classificacao_risco || 'Não informado'}`;
     });
 
     totalSpan.textContent = triagens.length;
@@ -92,8 +102,22 @@ document.addEventListener('DOMContentLoaded', async function () {
 const btnGerarPDF = document.getElementById('btnGerarPDF');
 if (btnGerarPDF) {
     btnGerarPDF.addEventListener('click', () => {
-        const doc = new jsPDF();
-        doc.text('Relatório de atendimentos', 14, 15);
+        const jsPDFClass = window.jspdf?.jsPDF || window.jsPDF || window.jspdf;
+        if (!jsPDFClass) {
+            alert('Biblioteca de PDF não está carregada. Recarregue a página e tente novamente.');
+            return;
+        }
+
+        const doc = new jsPDFClass({ unit: 'pt', format: 'a4' });
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.setTextColor(10, 32, 82);
+        doc.text('Relatório de Histórico de Atendimentos', 40, 50);
+
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(72, 82, 110);
+        doc.text(`Gerado por: ${localStorage.getItem('usuarioNome') || 'Usuário'} — ${new Date().toLocaleString('pt-BR')}`, 40, 68);
 
         const corpoTabela = document.getElementById('corpoTabelaTransacoes');
         const linhas = corpoTabela.querySelectorAll('tr');
@@ -106,20 +130,32 @@ if (btnGerarPDF) {
         });
 
         doc.autoTable({
-            head: [['Data', 'Evento', 'Detalhes']],
+            head: [['Data', 'Paciente', 'CPF', 'Profissional', 'Status Avaliação', 'Detalhes']],
             body: dadosTabela,
-            startY: 25,
-            theme: 'grid',
+            startY: 90,
+            theme: 'striped',
             styles: {
-                fontSize: 10,
-                cellPadding: 4,
+                font: 'Helvetica',
+                fontSize: 9,
+                textColor: [20, 34, 70],
+                cellPadding: 5,
             },
             headStyles: {
                 fillColor: [37, 150, 190],
+                textColor: 255,
+                halign: 'center',
+            },
+            alternateRowStyles: {
+                fillColor: [239, 248, 255],
+            },
+            columnStyles: {
+                5: { cellWidth: 180 },
             },
         });
 
-        doc.text(`Total de registros: ${document.getElementById('totalTransacoes').textContent}`, 14, doc.lastAutoTable.finalY + 10);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.text(`Total de registros: ${document.getElementById('totalTransacoes').textContent}`, 40, doc.lastAutoTable.finalY + 20);
         doc.save('historico-atendimentos.pdf');
     });
 }

@@ -15,29 +15,31 @@ function adicionarMensagem(texto, remetente, isAiResult = false) {
 
   historicoMensagens.push(novaMensagem);
 
-  const mensagemDiv = document.createElement('div'); 
-  mensagemDiv.classList.add('mensagem');
+  const mensagemDiv = document.createElement('div');
+  mensagemDiv.classList.add('mensagem-box');
+  mensagemDiv.classList.add(remetente === 'usuario' ? 'mensagem-usuario' : 'mensagem-ia');
+
+  const mensagemHeader = document.createElement('div');
+  mensagemHeader.classList.add('mensagem-header');
+  mensagemHeader.textContent = remetente === 'usuario' ? 'Entrada do profissional' : 'Resposta da IA';
+
+  const mensagemBody = document.createElement('div');
+  mensagemBody.classList.add('mensagem-body');
 
   if (remetente === 'usuario') {
-    mensagemDiv.classList.add('mensagem-usuario');
-    mensagemDiv.textContent = texto; 
+    mensagemBody.textContent = texto;
   } else {
-    mensagemDiv.classList.add('mensagem-ia');
-    
-    // Converte quebras de linha da IA em quebras de linha do HTML
-    const textoFormatado = texto.replace(/\n/g, '<br>');
-    let htmlContent = textoFormatado;
-    
-    // Adiciona a caixa de aviso se for o resultado da triagem
-    if (isAiResult) {
-        htmlContent += `
-            <div style="margin-top: 15px; padding: 12px; background-color: #fff3cd; color: #856404; border-left: 4px solid #ffeeba; border-radius: 4px; font-size: 0.9em; line-height: 1.4;">
-                <strong>⚠️ Atenção:</strong> Este diagnóstico preditivo foi gerado por Inteligência Artificial baseado em protocolos clínicos. <b>Ainda não possui validação médica.</b>
-            </div>
-        `;
-    }
-    
-    mensagemDiv.innerHTML = htmlContent;
+    mensagemBody.innerHTML = texto.replace(/\n/g, '<br>');
+  }
+
+  mensagemDiv.appendChild(mensagemHeader);
+  mensagemDiv.appendChild(mensagemBody);
+
+  if (isAiResult) {
+    const avisoDiv = document.createElement('div');
+    avisoDiv.classList.add('mensagem-ia-notice');
+    avisoDiv.innerHTML = '<strong>⚠️ Atenção:</strong> Este diagnóstico preditivo foi gerado por IA com base em protocolos clínicos. <b>Ainda não possui validação médica.</b>';
+    mensagemDiv.appendChild(avisoDiv);
   }
 
   chatContainer.appendChild(mensagemDiv);
@@ -45,46 +47,57 @@ function adicionarMensagem(texto, remetente, isAiResult = false) {
 }
 
 async function enviarMensagemDoUsuario() {
-  const texto = mensagemInput.value.trim();
+  const cpf = document.getElementById('cpf-input').value.trim();
+  const nomePaciente = document.getElementById('nome-paciente-input').value.trim();
+  const idadePaciente = document.getElementById('idade-paciente-input').value.trim();
+  const dadosAnamnese = mensagemInput.value.trim();
 
-  if (texto) { 
-    adicionarMensagem(texto, 'usuario');
-    mensagemInput.value = '';
+  if (!cpf || !nomePaciente || !idadePaciente || !dadosAnamnese) {
+    adicionarMensagem('Por favor, preencha CPF, nome, idade e sintomas do paciente antes de enviar.', 'IA', false);
+    return;
+  }
 
-    // Adiciona uma mensagem temporária de "Processando..."
-    const loadingId = 'loading-' + Date.now();
-    const loadingDiv = document.createElement('div');
-    loadingDiv.id = loadingId;
-    loadingDiv.classList.add('mensagem', 'mensagem-ia');
-    loadingDiv.innerHTML = "<i>Analisando sintomas e cruzando dados clínicos...</i>";
-    chatContainer.appendChild(loadingDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+  const mensagemUsuario = `Nome: ${nomePaciente}\nCPF: ${cpf}\nIdade: ${idadePaciente} anos\n\nSintomas:\n${dadosAnamnese}`;
+  adicionarMensagem(mensagemUsuario, 'usuario');
+  mensagemInput.value = '';
 
-    try {
-      const response = await fetch(`${BACKEND_URL}/minhaIA-chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: texto }),
-      });
+  const loadingId = 'loading-' + Date.now();
+  const loadingDiv = document.createElement('div');
+  loadingDiv.id = loadingId;
+  loadingDiv.classList.add('mensagem', 'mensagem-ia');
+  loadingDiv.innerHTML = "<i>Analisando sintomas e cruzando dados clínicos...</i>";
+  chatContainer.appendChild(loadingDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 
-      // Remove a mensagem de carregamento
-      document.getElementById(loadingId).remove();
+  try {
+    const response = await fetch(`${BACKEND_URL}/minhaIA-chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: dadosAnamnese,
+        usuario_id: Number(localStorage.getItem('usuarioId')) || null,
+        nome_paciente: nomePaciente,
+        idade_paciente: Number(idadePaciente) || null,
+        cpf: cpf,
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error('Falha na comunicação com a API');
-      }
+    document.getElementById(loadingId).remove();
 
-      const data = await response.json();
-      const respostaIA = data.reply || "Não entendi sua solicitação. Pode reformular?";
-
-      // Passa "true" no último parâmetro para ativar a caixa amarela de aviso
-      adicionarMensagem(respostaIA, 'IA', true);
-
-    } catch (error) {
-      console.error('Erro:', error);
-      document.getElementById(loadingId)?.remove();
-      adicionarMensagem("Desculpe, houve um erro de conexão ao processar os sintomas.", 'IA', false);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Falha na comunicação com a API');
     }
+
+    const data = await response.json();
+    const respostaIA = data.reply || "Não entendi sua solicitação. Pode reformular?";
+
+    adicionarMensagem(respostaIA, 'IA', true);
+
+  } catch (error) {
+    console.error('Erro:', error);
+    document.getElementById(loadingId)?.remove();
+    adicionarMensagem("Desculpe, houve um erro de conexão ao processar os sintomas.", 'IA', false);
   }
 }
 
