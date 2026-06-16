@@ -102,9 +102,11 @@ app.post('/login', async (req, res) => {
       : senha === user.senha_hash;
 
     if (!passwordMatches) {
+      console.warn(`Login falhou para usuário ${usuario}: senha incorreta.`);
       return res.json({ isValid: false });
     }
 
+    console.log(`Login bem-sucedido: ${user.username} (id=${user.id}, perfil=${user.perfil})`);
     return res.json({
       isValid: true,
       usuario: {
