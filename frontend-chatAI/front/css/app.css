@@ -341,7 +341,7 @@ header {
 .table-card table {
     width: 100%;
     border-collapse: collapse;
-    background: rgba(255,255,255,0.95);
+    background: rgba(255, 255, 255, 0.95);
 }
 
 .table-card th,
@@ -384,7 +384,6 @@ header {
     resize: vertical;
     font-size: 1rem;
     line-height: 1.6;
-}
     max-width: 100%;
 }
 
@@ -694,5 +693,20 @@ footer small {
 
     .page-content {
         margin-top: 160px;
+    }
+}
+
+/* Layout para colocar campos lado a lado */
+.form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+/* Responsividade: empilha os itens em telas menores (celulares) */
+@media (max-width: 720px) {
+    .form-row-3 {
+        grid-template-columns: 1fr;
+        gap: 0;
     }
 }

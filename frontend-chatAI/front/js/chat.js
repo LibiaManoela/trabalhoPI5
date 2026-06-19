@@ -50,14 +50,15 @@ async function enviarMensagemDoUsuario() {
   const cpf = document.getElementById('cpf-input').value.trim();
   const nomePaciente = document.getElementById('nome-paciente-input').value.trim();
   const idadePaciente = document.getElementById('idade-paciente-input').value.trim();
+  const sexoPaciente = document.getElementById('sexo-paciente-input').value.trim();
   const dadosAnamnese = mensagemInput.value.trim();
 
-  if (!cpf || !nomePaciente || !idadePaciente || !dadosAnamnese) {
-    adicionarMensagem('Por favor, preencha CPF, nome, idade e sintomas do paciente antes de enviar.', 'IA', false);
+  if (!cpf || !nomePaciente || !idadePaciente || !sexoPaciente || !dadosAnamnese) {
+    adicionarMensagem('Por favor, preencha todos os campos antes de enviar.', 'IA', false);
     return;
   }
 
-  const mensagemUsuario = `Nome: ${nomePaciente}\nCPF: ${cpf}\nIdade: ${idadePaciente} anos\n\nSintomas:\n${dadosAnamnese}`;
+  const mensagemUsuario = `Nome: ${nomePaciente}\nCPF: ${cpf}\nIdade: ${idadePaciente} anos\nSexo: ${sexoPaciente}\n\nSintomas:\n${dadosAnamnese}`;
   adicionarMensagem(mensagemUsuario, 'usuario');
   mensagemInput.value = '';
 
@@ -79,6 +80,7 @@ async function enviarMensagemDoUsuario() {
         nome_paciente: nomePaciente,
         idade_paciente: Number(idadePaciente) || null,
         cpf: cpf,
+        sexo_paciente: document.getElementById('sexo-paciente-input').value.trim() || null
       }),
     });
 

@@ -47,12 +47,7 @@ Start-Process http://localhost:8080
 
 ## PARTE 2: TESTAR O FRONTEND
 
-### Opção A: Servidor Local Python (Recomendado para desenvolvimento)
-
-```bash
-cd "c:\Projetos Facul\trabalhoPI5\frontend-chatAI\front"
-python -m http.server 5500
-```
+### Opção A:
 
 **Acesse no navegador:**
 ```
