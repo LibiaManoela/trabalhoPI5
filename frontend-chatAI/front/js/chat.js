@@ -47,6 +47,8 @@ function adicionarMensagem(texto, remetente, isAiResult = false) {
 }
 
 async function enviarMensagemDoUsuario() {
+  enviarBtn.textContent = 'Enviando...';
+  enviarBtn.disabled = true;
   const cpf = document.getElementById('cpf-input').value.trim();
   const nomePaciente = document.getElementById('nome-paciente-input').value.trim();
   const idadePaciente = document.getElementById('idade-paciente-input').value.trim();
@@ -101,16 +103,18 @@ async function enviarMensagemDoUsuario() {
     document.getElementById(loadingId)?.remove();
     adicionarMensagem("Desculpe, houve um erro de conexão ao processar os sintomas.", 'IA', false);
   }
+  enviarBtn.textContent = 'Enviar';
+  enviarBtn.disabled = false;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    adicionarMensagem("Olá! Insira os sintomas e os sinais vitais do paciente para realizar a triagem pelo Protocolo de Manchester.", "IA", false);
+  adicionarMensagem("Olá! Insira os sintomas e os sinais vitais do paciente para realizar a triagem pelo Protocolo de Manchester.", "IA", false);
 
-    enviarBtn.addEventListener('click', enviarMensagemDoUsuario);
-    mensagemInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            enviarMensagemDoUsuario();
-        }
-    });
+  enviarBtn.addEventListener('click', enviarMensagemDoUsuario);
+  mensagemInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      enviarMensagemDoUsuario();
+    }
+  });
 });

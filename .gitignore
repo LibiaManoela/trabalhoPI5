@@ -87,3 +87,4 @@ tmp/
 *.swp
 dist
 build
+.continue/agents/new-config.yaml

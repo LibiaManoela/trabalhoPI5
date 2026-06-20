@@ -18,6 +18,9 @@ const pool = new Pool({
   max: 10,
 });
 
+const ALLOWED_SEXOS = ['FEMININO', 'MASCULINO', 'OUTRO', 'PREFIRO_NAO_INFORMAR'];
+const ALLOWED_PERFIS = ['RECEPCIONISTA','ENFERMEIRO','MEDICO','ADMINISTRADOR'];
+
 app.use(express.json());
 app.use(cors({ origin: '*' }));
 
@@ -107,7 +110,7 @@ app.post('/login', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT id, nome, username, senha_hash, perfil, registro_profissional FROM usuarios WHERE username = $1 OR registro_profissional = $1 LIMIT 1',
+      'SELECT id, nome, username, senha_hash, perfil, registro_profissional, sexo FROM usuarios WHERE username = $1 OR registro_profissional = $1 LIMIT 1',
       [usuario]
     );
 
@@ -134,6 +137,7 @@ app.post('/login', async (req, res) => {
         username: user.username,
         perfil: user.perfil,
         registro_profissional: user.registro_profissional,
+        sexo: user.sexo || null,
       },
     });
   } catch (error) {
@@ -147,6 +151,7 @@ app.post('/triagem', async (req, res) => {
     usuario_id,
     nome_paciente,
     cpf,
+    sexo_paciente,
     idade_paciente,
     dados_anamnese,
     diagnostico_ia,
@@ -154,19 +159,20 @@ app.post('/triagem', async (req, res) => {
     status,
   } = req.body;
 
-  if (!dados_anamnese || !nome_paciente || !cpf || !idade_paciente) {
-    return res.status(400).json({ error: 'CPF, nome, idade e dados de anamnese são obrigatórios.' });
+  if (!dados_anamnese || !nome_paciente || !cpf || !idade_paciente || !sexo_paciente) {
+    return res.status(400).json({ error: 'CPF, nome, sexo, idade e dados de anamnese são obrigatórios.' });
   }
 
   try {
     const result = await pool.query(
-      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, sexo_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
       [
         usuario_id || null,
         nome_paciente,
         cpf,
+        sexo_paciente,
         idade_paciente ?? null,
         dados_anamnese,
         diagnostico_ia || 'Aguardando validação médica',
@@ -183,10 +189,10 @@ app.post('/triagem', async (req, res) => {
 });
 
 app.post('/minhaIA-chat', async (req, res) => {
-  const { message, usuario_id, nome_paciente, idade_paciente, cpf } = req.body;
+  const { message, usuario_id, nome_paciente, sexo_paciente, idade_paciente, cpf } = req.body;
 
-  if (!message || !nome_paciente || !idade_paciente || !cpf) {
-    return res.status(400).json({ error: 'CPF, nome, idade e sintomas são obrigatórios para a triagem.' });
+  if (!message || !nome_paciente || !sexo_paciente || !idade_paciente || !cpf) {
+    return res.status(400).json({ error: 'CPF, nome, sexo, idade e sintomas são obrigatórios para a triagem.' });
   }
 
   try {
@@ -200,13 +206,14 @@ app.post('/minhaIA-chat', async (req, res) => {
     const diagnostico_ia = iaData.resposta_final || 'Erro ao gerar diagnóstico.';
 
     const result = await pool.query(
-      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, sexo_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
       [
         usuario_id || null,
         nome_paciente,
         cpf,
+        sexo_paciente,
         idade_paciente ?? null,
         message,
         diagnostico_ia,
@@ -270,7 +277,7 @@ app.post('/triagens/:id/validacao', requireMedicoOrAdmin, async (req, res) => {
   }
 
   try {
-    const status = aprovado ? 'APROVADO' : 'REPROVADO_CORRIGIDO';
+    const status = aprovado ? 'APROVADO' : 'REPROVADO';
     const triagemId = Number(req.params.id);
 
     await pool.query('BEGIN');
@@ -302,20 +309,28 @@ app.get('/usuarios', requireAdmin, async (_req, res) => {
 });
 
 app.post('/usuarios', requireAdmin, async (req, res) => {
-  const { nome, username, senha, perfil, registro_profissional } = req.body;
+  const { nome, username, senha, perfil, registro_profissional, sexo } = req.body;
 
   if (!nome || !username || !senha || !perfil) {
     return res.status(400).json({ error: 'Nome, usuário, senha e perfil são obrigatórios.' });
+  }
+
+  if (!ALLOWED_PERFIS.includes(perfil)) {
+    return res.status(400).json({ error: 'Perfil inválido.' });
+  }
+
+  if (sexo && !ALLOWED_SEXOS.includes(sexo)) {
+    return res.status(400).json({ error: 'Sexo inválido.' });
   }
 
   try {
     const senhaHash = bcrypt.hashSync(senha, 10);
     
     const result = await pool.query(
-      `INSERT INTO usuarios (nome, username, senha_hash, perfil, registro_profissional, ativo)
-       VALUES ($1, $2, $3, $4, $5, TRUE)
-       RETURNING id, nome, username, perfil, registro_profissional, ativo`,
-      [nome, username, senhaHash, perfil, registro_profissional || null]
+      `INSERT INTO usuarios (nome, username, senha_hash, perfil, registro_profissional, ativo, sexo)
+       VALUES ($1, $2, $3, $4, $5, TRUE, $6)
+       RETURNING id, nome, username, perfil, registro_profissional, ativo, sexo`,
+      [nome, username, senhaHash, perfil, registro_profissional || null, sexo || null]
     );
 
     return res.status(201).json({ usuario: result.rows[0] });
