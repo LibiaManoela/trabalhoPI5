@@ -222,3 +222,16 @@ Buscamos em nosso banco vetorial ChromaDB os casos históricos mais semelhantes.
 Aplicamos um re-ranking (filtros de palavras críticas como "dor no peito" e "falta de ar").
 
 O modelo de linguagem local (Mistral via Ollama) recebe o novo caso + os casos históricos e gera a Classificação de Risco, Justificativa e Conduta.
+
+## 🚀 Melhorias Futuras (Roadmap)
+
+Este projeto foi construído como um MVP (Produto Mínimo Viável) escalável. Para a adoção do sistema em um ambiente hospitalar de produção real, as seguintes evoluções arquiteturais estão mapeadas:
+
+* **🔒 Segurança Avançada (JWT + HttpOnly Cookies):** Substituir o atual armazenamento de sessão via `localStorage` pela implementação de **JSON Web Tokens (JWT)** transitados através de cookies *HttpOnly*. Esta abordagem mitiga ataques de *Cross-Site Scripting (XSS)* e adequa a aplicação às normas rígidas de segurança de dados de saúde (LGPD/HIPAA).
+
+* **🧠 Aprendizado Contínuo (Active Learning) da IA:**
+  Implementar um *CRON Job* (rotina automatizada) no back-end para buscar periodicamente as triagens validadas e **aprovadas** pelos médicos no PostgreSQL, formatá-las e injetá-las automaticamente no banco de dados vetorial (`ChromaDB`). Isso criará um ciclo de retroalimentação contínuo sem intervenção humana, deixando a IA progressivamente mais inteligente baseada nos padrões do próprio hospital.
+
+* **⚡ Paginação Dinâmica de Dados:** Substituir a atual limitação bruta de busca de histórico (`LIMIT 150`) por uma estrutura robusta de paginação na API REST (via *Offset* ou *Cursor-based*). Isso garantirá que o painel administrativo funcione com altíssima performance, mesmo com dezenas de milhares de registros.
+
+* **🔔 Notificações em Tempo Real (WebSockets):** Implementar comunicação bidirecional com `Socket.io` para que, no momento em que a equipe de enfermagem registrar um quadro de **Risco Vermelho** ou **Laranja**, um alerta do tipo *Push* surja instantaneamente na tela do médico de plantão, agilizando o socorro sem a necessidade de recarregar páginas.
