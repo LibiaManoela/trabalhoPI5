@@ -38,7 +38,7 @@ async function login() {
             localStorage.setItem('usuarioRegistro', data.usuario.registro_profissional || '');
 
             await mostrarAlertaPersonalizado('Sucesso!', "Login realizado com sucesso!", 'sucesso');
-            window.location.href = '/html/dashboard.html';
+            window.location.href = '/html/painel.html';
             return;
         }
 
@@ -152,7 +152,7 @@ function cookies() {
 function mostrarAlertaPersonalizado(titulo, mensagem, tipo = 'info') {
     return new Promise((resolve) => {
         const modal = document.createElement('div');
-        modal.classList.add('modal-overlay'); // 👈 Usando a classe do CSS
+        modal.classList.add('modal-overlay'); // Usando a classe do CSS
         
         let corTitulo = 'var(--blue-dark)';
         let corBotao = 'var(--blue-light)';
@@ -164,7 +164,7 @@ function mostrarAlertaPersonalizado(titulo, mensagem, tipo = 'info') {
         }
         
         const conteudo = document.createElement('div');
-        conteudo.classList.add('modal-caixa'); // 👈 Usando a classe do CSS
+        conteudo.classList.add('modal-caixa'); // Usando a classe do CSS
         
         conteudo.innerHTML = `
             <h2 style="margin: 0 0 15px 0; color: ${corTitulo}; font-size: 1.3rem;">${titulo}</h2>

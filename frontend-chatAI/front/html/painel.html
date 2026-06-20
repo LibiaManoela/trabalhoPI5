@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/app.css">
-    <script src="../js/dashboard.js" defer></script>
+    <script src="../js/painel.js" defer></script>
     <title>HCI Vitta | Painel Operacional</title>
 </head>
 <body>
     <header>
         <div class="header-left">
-            <a class="brand-link" href="dashboard.html">
+            <a class="brand-link" href="painel.html">
                 <img class="brand-logo" src="../imagens/logo.jpeg" alt="HCI Vitta logo" />
                 <div class="brand-meta">
                     <span class="brand-name">HCI Vitta</span>
@@ -19,10 +19,10 @@
             </a>
         </div>
         <nav class="header-nav">
-            <a href="dashboard.html" class="active">Painel Principal</a>
-            <a href="chat.html">Nova Triagem (IA)</a>
-            <a href="appointment.html">Validação Médica</a>
-            <a href="history.html">Histórico de Admissões</a>
+            <a href="painel.html" class="active">Painel Principal</a>
+            <a href="triagem.html">Nova Triagem (IA)</a>
+            <a href="validacao-medica.html">Validação Médica</a>
+            <a href="historico.html">Histórico de Admissões</a>
             <a href="profile.html">Perfil</a>
             <a href="funcionarios.html">Equipe</a>
         </nav>
@@ -64,7 +64,7 @@
                     <h2>Fluxo de Trabalho Primário</h2>
                     <p style="font-size: 1.1rem; font-weight: 600; margin: 12px 0; color: var(--blue-dark);">Iniciar Novo Atendimento</p>
                     <p style="margin-bottom: 15px;">Colete dados vitais e queixas para processamento do diagnóstico probabilístico da IA.</p>
-                    <a class="button button-primary" href="chat.html" style="display: block; text-align: center;">Iniciar Triagem Inteligente</a>
+                    <a class="button button-primary" href="triagem.html" style="display: block; text-align: center;">Iniciar Triagem Inteligente</a>
                 </div>
             </div>
         </section>
@@ -118,12 +118,12 @@
             <div class="plan-card">
                 <h3>Módulo do Médico</h3>
                 <p>Aprovação, reprovação e retificação de diagnósticos da IA para retroalimentação do sistema.</p>
-                <a class="button button-secondary" href="appointment.html">Validar Diagnósticos</a>
+                <a class="button button-secondary" href="validacao-medica.html">Validar Diagnósticos</a>
             </div>
             <div class="plan-card">
                 <h3>Histórico Geral</h3>
                 <p>Consulte relatórios antigos de triagem, prontuários rápidos e designações anteriores.</p>
-                <a class="button button-secondary" href="history.html">Ver Histórico</a>
+                <a class="button button-secondary" href="historico.html">Ver Histórico</a>
             </div>
             <div class="plan-card">
                 <h3>Equipe Clínica</h3>
@@ -136,6 +136,6 @@
     <footer>
         <small>HCI Vitta © 2026 | Sistema Interno de Suporte à Decisão Clínica.</small>
     </footer>
-    <script src="../js/app.js" defer></script>
+    <script src="../js/painel.js" defer></script>
 </body>
 </html>
