@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         document.getElementById('nome').value = usuario.nome || '';
         document.getElementById('username').value = usuario.username || '';
         document.getElementById('perfil').value = usuario.perfil || '';
+        document.getElementById('sexo').value = usuario.sexo || '';
         document.getElementById('registro_profissional').value = usuario.registro_profissional || '';
         document.getElementById('statusUsuario').textContent = usuario.ativo ? 'Ativo' : 'Inativo';
         document.getElementById('dataCadastro').textContent = formatDate(usuario.criado_em) || '--';

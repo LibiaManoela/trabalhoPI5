@@ -118,3 +118,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  adicionarMensagem("Olá! Insira os sintomas e os sinais vitais do paciente para realizar a triagem pelo Protocolo de Manchester.", "IA", false);
+
+  const form = document.getElementById('triagem-form');
+  
+  // Escuta o evento de submit do formulário ao invés de apenas o clique
+  form.addEventListener('submit', (event) => {
+    event.preventDefault(); // Evita que a tela pisque/recarregue
+    enviarMensagemDoUsuario();
+  });
+
+  mensagemInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      // Enter submeta validando os campos
+      if(form.checkValidity()) {
+         enviarMensagemDoUsuario();
+      } else {
+         form.reportValidity();
+      }
+    }
+  });
+});

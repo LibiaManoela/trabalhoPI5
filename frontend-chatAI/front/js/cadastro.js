@@ -26,9 +26,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const senha = document.getElementById('senha').value;
             const confirmaSenha = document.getElementById('confirmaSenha').value;
             const perfil = document.getElementById('perfil').value;
+            const sexo = document.getElementById('sexo').value;
             const registro_profissional = document.getElementById('registro_profissional').value.trim() || null;
 
-            if (!nome || !username || !senha || !perfil) {
+            if (!nome || !username || !senha || !perfil || !sexo) {
                 mensagemErro.textContent = 'Preencha todos os campos obrigatórios.';
                 mensagemErro.style.display = 'block';
                 mensagemSucesso.style.display = 'none';
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         username,
                         senha,
                         perfil,
+                        sexo,
                         registro_profissional,
                     }),
                 });

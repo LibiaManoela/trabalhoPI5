@@ -156,7 +156,6 @@ app.post('/triagem', async (req, res) => {
     dados_anamnese,
     diagnostico_ia,
     classificacao_risco,
-    status,
   } = req.body;
 
   if (!dados_anamnese || !nome_paciente || !cpf || !idade_paciente || !sexo_paciente) {
@@ -165,8 +164,8 @@ app.post('/triagem', async (req, res) => {
 
   try {
     const result = await pool.query(
-      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, sexo_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, sexo_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
       [
         usuario_id || null,
@@ -177,7 +176,6 @@ app.post('/triagem', async (req, res) => {
         dados_anamnese,
         diagnostico_ia || 'Aguardando validação médica',
         classificacao_risco || 'PENDENTE',
-        status || 'PENDENTE',
       ]
     );
 
@@ -206,8 +204,8 @@ app.post('/minhaIA-chat', async (req, res) => {
     const diagnostico_ia = iaData.resposta_final || 'Erro ao gerar diagnóstico.';
 
     const result = await pool.query(
-      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, sexo_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO triagens (usuario_id, nome_paciente, cpf, sexo_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
       [
         usuario_id || null,
@@ -217,8 +215,7 @@ app.post('/minhaIA-chat', async (req, res) => {
         idade_paciente ?? null,
         message,
         diagnostico_ia,
-        'PENDENTE',
-        'PENDENTE',
+        'PENDENTE' // classificacao_risco
       ]
     );
 
@@ -277,22 +274,18 @@ app.post('/triagens/:id/validacao', requireMedicoOrAdmin, async (req, res) => {
   }
 
   try {
-    const status = aprovado ? 'APROVADO' : 'REPROVADO';
     const triagemId = Number(req.params.id);
 
-    await pool.query('BEGIN');
+    // Graças ao Trigger no PostgreSQL, só precisamos fazer o INSERT da retroalimentação médica. O Trigger vai atualizar a triagem e criar o histórico automaticamente.
+    // O banco atualiza a tabela triagens sozinho.
     const validation = await pool.query(
       `INSERT INTO retroalimentacao_medica (triagem_id, medico_id, aprovado, diagnostico_correto, observacoes_clinicas)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [triagemId, medico_id, aprovado, diagnostico_correto || null, observacoes_clinicas || null]
     );
 
-    await pool.query('UPDATE triagens SET status = $1 WHERE id = $2', [status, triagemId]);
-    await pool.query('COMMIT');
-
     return res.status(201).json({ validation: validation.rows[0] });
   } catch (error) {
-    await pool.query('ROLLBACK');
     console.error('Erro ao salvar validação médica:', error);
     return res.status(500).json({ error: 'Erro ao salvar validação médica.' });
   }
@@ -300,7 +293,7 @@ app.post('/triagens/:id/validacao', requireMedicoOrAdmin, async (req, res) => {
 
 app.get('/usuarios', requireAdmin, async (_req, res) => {
   try {
-    const result = await pool.query('SELECT id, nome, username, perfil, registro_profissional, ativo FROM usuarios ORDER BY nome');
+    const result = await pool.query('SELECT id, nome, sexo, username, perfil, registro_profissional, ativo FROM usuarios ORDER BY nome');
     return res.json(result.rows);
   } catch (error) {
     console.error('Erro ao buscar usuários:', error);
@@ -311,15 +304,15 @@ app.get('/usuarios', requireAdmin, async (_req, res) => {
 app.post('/usuarios', requireAdmin, async (req, res) => {
   const { nome, username, senha, perfil, registro_profissional, sexo } = req.body;
 
-  if (!nome || !username || !senha || !perfil) {
-    return res.status(400).json({ error: 'Nome, usuário, senha e perfil são obrigatórios.' });
+  if (!nome || !username || !senha || !perfil || !sexo) {
+    return res.status(400).json({ error: 'Nome, usuário, senha, perfil e sexo são obrigatórios.' });
   }
 
   if (!ALLOWED_PERFIS.includes(perfil)) {
     return res.status(400).json({ error: 'Perfil inválido.' });
   }
 
-  if (sexo && !ALLOWED_SEXOS.includes(sexo)) {
+  if (!ALLOWED_SEXOS.includes(sexo)) {
     return res.status(400).json({ error: 'Sexo inválido.' });
   }
 
@@ -327,10 +320,10 @@ app.post('/usuarios', requireAdmin, async (req, res) => {
     const senhaHash = bcrypt.hashSync(senha, 10);
     
     const result = await pool.query(
-      `INSERT INTO usuarios (nome, username, senha_hash, perfil, registro_profissional, ativo, sexo)
-       VALUES ($1, $2, $3, $4, $5, TRUE, $6)
-       RETURNING id, nome, username, perfil, registro_profissional, ativo, sexo`,
-      [nome, username, senhaHash, perfil, registro_profissional || null, sexo || null]
+      `INSERT INTO usuarios (nome, sexo, username, senha_hash, perfil, registro_profissional, ativo)
+       VALUES ($1, $2, $3, $4, $5, $6, TRUE)
+       RETURNING id, nome, sexo, username, perfil, registro_profissional, ativo`,
+      [nome, sexo, username, senhaHash, perfil, registro_profissional || null]
     );
 
     return res.status(201).json({ usuario: result.rows[0] });
@@ -383,7 +376,7 @@ app.put('/usuarios/:id', requireSelfOrAdmin, async (req, res) => {
     }
 
     query += updates.join(', ');
-    query += ` WHERE id = $${paramCount} RETURNING id, nome, username, perfil, registro_profissional, ativo`;
+    query += ` WHERE id = $${paramCount} RETURNING id, nome, sexo, username, perfil, registro_profissional, ativo`;
     values.push(usuarioId);
 
     const result = await pool.query(query, values);
@@ -405,7 +398,7 @@ app.put('/usuarios/:id', requireSelfOrAdmin, async (req, res) => {
 app.get('/usuarios/:id', requireSelfOrAdmin, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, nome, username, perfil, registro_profissional, ativo, criado_em FROM usuarios WHERE id = $1',
+      'SELECT id, nome, sexo, username, perfil, registro_profissional, ativo, criado_em FROM usuarios WHERE id = $1',
       [req.params.id]
     );
 
@@ -430,7 +423,7 @@ app.delete('/usuarios/:id', requireAdmin, async (req, res) => {
 
   try {
     const result = await pool.query(
-      'UPDATE usuarios SET ativo = FALSE WHERE id = $1 RETURNING id, nome, username, perfil, registro_profissional, ativo',
+      'UPDATE usuarios SET ativo = FALSE WHERE id = $1 RETURNING id, nome, sexo, username, perfil, registro_profissional, ativo',
       [usuarioId]
     );
 

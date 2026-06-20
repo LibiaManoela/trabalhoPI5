@@ -48,22 +48,33 @@
 Usuário acessa cadastro.html
          │
          ▼
-Preenche formulário (nome, username, senha, perfil)
+Preenche formulário (nome, username, senha, perfil, sexo)  ← NOVO: campo sexo obrigatório
          │
          ▼
-JavaScript faz POST para /usuarios
+JavaScript faz POST /usuarios com:
+  {
+    nome: "...",
+    username: "...",
+    senha: "...",
+    perfil: "MEDICO|ENFERMEIRO|RECEPCIONISTA|ADMINISTRADOR",
+    sexo: "FEMININO|MASCULINO|OUTRO|PREFIRO_NAO_INFORMAR",  ← NOVO
+    registro_profissional: "..." (opcional)
+  }
          │
          ▼
 Backend valida dados
          │
-         ├─ Se válido: Faz hash da senha com bcrypt
-         │   Insere em tabela usuarios
-         │   Retorna status 201
+         ├─ Se perfil inválido → Retorna erro 400
+         ├─ Se sexo inválido → Retorna erro 400
+         ├─ Se username/CRM duplicado → Retorna erro 409
          │
-         └─ Se inválido: Retorna erro 400/409
+         └─ Se válido: 
+             1. Faz hash da senha com bcrypt
+             2. Insere em tabela usuarios (com sexo)
+             3. Retorna status 201
          │
          ▼
-Frontend mostra mensagem de sucesso ou erro
+Frontend mostra mensagem de sucesso
 ```
 
 ---
@@ -128,24 +139,43 @@ Frontend mostra "Perfil atualizado com sucesso!"
 Usuário em chat.html
          │
          ▼
-Digita sintomas (ex: "febre 39.5°C, dor de garganta")
+Preenche formulário:
+  - CPF do paciente (11 dígitos)              ← NOVO
+  - Nome completo do paciente                 ← Novo campo obrigatório
+  - Sexo/Gênero do paciente                   ← NOVO: FEMININO|MASCULINO|OUTRO|PREFIRO_NAO_INFORMAR
+  - Idade do paciente
+  - Sintomas/Anamnese (textarea)
          │
          ▼
-JavaScript faz POST /gemini-chat com {mensagem}
+JavaScript valida e faz POST /minhaIA-chat com:
+  {
+    message: "descrição dos sintomas",
+    usuario_id: (id do profissional logado),
+    nome_paciente: "...",
+    cpf: "11111111111",                       ← NOVO
+    sexo_paciente: "FEMININO|...",            ← NOVO
+    idade_paciente: 45
+  }
          │
          ▼
 Backend:
-  1. Cria registro em tabela triagens
-  2. Salva: nome_paciente, idade, dados_anamnese, usuario_id
-  3. Chama IA Engine (Python API)
-  4. Recebe: diagnostico_ia, classificacao_risco
-  5. Salva na triagem e retorna tudo
+  1. Valida campos obrigatórios (CPF, nome, sexo, idade, sintomas)
+  2. Envia sintomas para IA Engine (Python)
+  3. Recebe diagnóstico_ia do motor RAG
+  4. Cria registro em triagens com:
+     - usuario_id (profissional)
+     - nome_paciente, cpf, sexo_paciente, idade_paciente
+     - dados_anamnese = mensagem enviada
+     - diagnostico_ia = resposta da IA
+     - status = PENDENTE
+  5. Retorna triagem criada
          │
          ▼
-Frontend exibe resposta da IA + triagem criada
+Frontend exibe resposta da IA com aviso:
+  "⚠️ Este diagnóstico foi gerado por IA. Ainda não possui validação médica."
          │
          ▼
-Triagem aparece em history.html com status PENDENTE
+Triagem agora aparece em appointment.html (para médicos validarem)
 ```
 
 ---
@@ -156,41 +186,47 @@ Triagem aparece em history.html com status PENDENTE
 MÉDICO acessa appointment.html
          │
          ▼
-GET /triagens (busca triagens pendentes)
+GET /triagens (busca triagens com status PENDENTE)
          │
          ▼
-Exibe triagens com status = PENDENTE
+Exibe triagens pendentes de validação
          │
          ▼
-MÉDICO lê diagnóstico IA e preenche:
-  - Diagnóstico Correto (field)
-  - Observações Clínicas (textarea)
+MÉDICO lê dados da triagem:
+  - Dados do paciente (nome, CPF, sexo, idade)          ← NOVO: Inclui CPF e sexo
+  - Anamnese digitada
+  - Diagnóstico sugerido pela IA
          │
          ▼
-Clica "Aprovar" ou "Rejeitar"
+MÉDICO preenche validação:
+  - Diagnóstico Correto (ou confirma o da IA)
+  - Observações Clínicas (comentários/feedback)
+         │
+         ▼
+Clica "Aprovar Diagnóstico" ou "Rejeitar / Retificar"
          │
          ▼
 POST /triagens/:id/validacao com:
   {
-    medico_id: [id do médico logado],
-    aprovado: true/false,
+    medico_id: (id do médico logado),
+    aprovado: true|false,
     diagnostico_correto: "...",
     observacoes_clinicas: "..."
   }
          │
          ▼
-Backend (transação):
-  1. Cria registro em retroalimentacao_medica
-  2. Atualiza status da triagem:
-     - Se aprovado=true  → status = APROVADO
-     - Se aprovado=false → status = REPROVADO_CORRIGIDO
-  3. Se erro: rollback (tudo ou nada)
+Backend (Transação ACID):
+  1. Insere registro em retroalimentacao_medica
+  2. TRIGGER automático executa:
+     - Se aprovado=true  → UPDATE triagens SET status='APROVADO'
+     - Se aprovado=false → UPDATE triagens SET status='REPROVADO'
+  3. Retorna status 201
          │
          ▼
-Frontend: Recarrega página (triagem desaparece)
+Frontend: Recarrega appointment.html (triagem desaparece da lista)
          │
          ▼
-Triagem agora em HISTORY.HTML com novo status
+Triagem agora em HISTORY.HTML com novo status (APROVADO ou REPROVADO)
 ```
 
 ---
@@ -198,16 +234,16 @@ Triagem agora em HISTORY.HTML com novo status
 ### 👥 LISTAR FUNCIONÁRIOS
 
 ```
-Usuário acessa funcionarios.html
+ADMIN acessa funcionarios.html
          │
          ▼
-JavaScript faz GET /usuarios
+JavaScript faz GET /usuarios (com header x-usuario-id)
          │
          ▼
 Backend retorna array com todos os usuários:
   [
-    { id, nome, username, perfil, registro_profissional, ativo, criado_em },
-    { id, nome, username, perfil, registro_profissional, ativo, criado_em },
+    { id, nome, sexo, username, perfil, registro_profissional, ativo },  ← NOVO: sexo
+    { id, nome, sexo, username, perfil, registro_profissional, ativo },
     ...
   ]
          │
@@ -219,46 +255,92 @@ Frontend renderiza tabela HTML com dados
 
 ## 3️⃣ Banco de Dados (PostgreSQL)
 
+### 📋 Tipos ENUM do Sistema
+
+```sql
+-- Perfis/Papéis de usuários
+CREATE TYPE perfil_usuario AS ENUM ('RECEPCIONISTA', 'ENFERMEIRO', 'MEDICO', 'ADMINISTRADOR');
+
+-- Estados das triagens no ciclo de vida
+CREATE TYPE status_triagem AS ENUM ('PENDENTE', 'APROVADO', 'REPROVADO');
+
+-- Opções de sexo/gênero (conforme formulário)
+CREATE TYPE sexo_opcoes AS ENUM ('FEMININO', 'MASCULINO', 'OUTRO', 'PREFIRO_NAO_INFORMAR');
+```
+
 ### Tabela: usuarios
 ```sql
 CREATE TABLE usuarios (
   id SERIAL PRIMARY KEY,
-  nome VARCHAR NOT NULL,
-  username VARCHAR UNIQUE NOT NULL,
-  senha_hash VARCHAR NOT NULL,        -- bcrypt hashed
-  perfil ENUM('RECEPCIONISTA', 'ENFERMEIRO', 'MEDICO', 'ADMINISTRADOR'),
-  registro_profissional VARCHAR,      -- COREN ou CRM
-  criado_em TIMESTAMP DEFAULT NOW(),
+  nome VARCHAR(100) NOT NULL,
+  sexo sexo_opcoes NOT NULL,                    -- NOVO: Campo obrigatório
+  username VARCHAR(50) UNIQUE NOT NULL,
+  senha_hash VARCHAR(255) NOT NULL,             -- bcrypt hashed
+  perfil perfil_usuario NOT NULL,               -- ENUM: Tipo de acesso
+  registro_profissional VARCHAR(30) UNIQUE,     -- COREN ou CRM
+  criado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   ativo BOOLEAN DEFAULT TRUE
 );
+
+-- Índice para login rápido
+CREATE INDEX idx_usuarios_username ON usuarios(username);
 ```
 
 ### Tabela: triagens
 ```sql
 CREATE TABLE triagens (
   id SERIAL PRIMARY KEY,
-  usuario_id INTEGER REFERENCES usuarios,
-  nome_paciente VARCHAR,
-  idade_paciente INTEGER,
-  dados_anamnese TEXT,               -- queixa do paciente
-  diagnostico_ia VARCHAR,            -- resposta da IA
-  classificacao_risco VARCHAR,       -- VERMELHA, LARANJA, etc
-  status ENUM('PENDENTE', 'APROVADO', 'REPROVADO_CORRIGIDO'),
-  criado_em TIMESTAMP DEFAULT NOW()
+  usuario_id INT REFERENCES usuarios(id) ON DELETE SET NULL,  -- Quem fez a triagem
+  nome_paciente VARCHAR(150) NOT NULL,
+  cpf CHAR(11) NOT NULL,                        -- NOVO: Identificação do paciente
+  sexo_paciente sexo_opcoes NOT NULL,           -- NOVO: Sexo declarado do paciente
+  idade_paciente INT,
+  dados_anamnese TEXT NOT NULL,                 -- Queixa/sintomas
+  diagnostico_ia TEXT NOT NULL,                 -- Resposta da IA
+  classificacao_risco VARCHAR(50),              -- Protocolo (ex: VERMELHA, LARANJA)
+  status status_triagem DEFAULT 'PENDENTE',     -- ENUM: Ciclo de vida
+  criado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Índices para buscas rápidas
+CREATE INDEX idx_triagens_status ON triagens(status);
+CREATE INDEX idx_triagens_cpf ON triagens(cpf);  -- Histórico rápido do paciente
 ```
 
 ### Tabela: retroalimentacao_medica
 ```sql
 CREATE TABLE retroalimentacao_medica (
   id SERIAL PRIMARY KEY,
-  triagem_id INTEGER UNIQUE REFERENCES triagens,
-  medico_id INTEGER REFERENCES usuarios,
-  aprovado BOOLEAN,                  -- true/false
-  diagnostico_correto VARCHAR,       -- o que o médico disse
-  observacoes_clinicas TEXT,         -- comentários
-  avaliado_em TIMESTAMP DEFAULT NOW()
+  triagem_id INT UNIQUE REFERENCES triagens(id) ON DELETE CASCADE,  -- 1:1 com triagem
+  medico_id INT REFERENCES usuarios(id) ON DELETE RESTRICT,         -- Médico que validou
+  aprovado BOOLEAN NOT NULL,                    -- true=APROVADO, false=REPROVADO
+  diagnostico_correto TEXT,                     -- Diagnóstico correto do médico
+  observacoes_clinicas TEXT,                    -- Feedback/comentários
+  avaliado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+```
+
+### ⚙️ Trigger: Atualização Automática de Status
+
+```sql
+-- Função que atualiza status na triagem após validação médica
+CREATE OR REPLACE FUNCTION fn_atualizar_status_triagem()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.aprovado = TRUE THEN
+        UPDATE triagens SET status = 'APROVADO' WHERE id = NEW.triagem_id;
+    ELSIF NEW.aprovado = FALSE THEN
+        UPDATE triagens SET status = 'REPROVADO' WHERE id = NEW.triagem_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Executa a função automaticamente após inserção em retroalimentacao_medica
+CREATE TRIGGER trg_apos_inserir_retroalimentacao
+AFTER INSERT ON retroalimentacao_medica
+FOR EACH ROW
+EXECUTE FUNCTION fn_atualizar_status_triagem();
 ```
 
 ---
