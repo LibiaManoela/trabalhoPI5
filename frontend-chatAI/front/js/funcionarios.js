@@ -78,10 +78,10 @@ async function excluirUsuario(usuarioIdParaExcluir) {
             throw new Error(data.error || 'Erro ao excluir usuário.');
         }
 
-        alert(`Usuário ${data.usuario.nome} desativado com sucesso.`);
+        await mostrarAlertaPersonalizado('Sucesso!', `Usuário ${data.usuario.nome} desativado com sucesso.`, 'sucesso');
         window.location.reload();
     } catch (error) {
         console.error('Erro ao excluir usuário:', error);
-        alert(error.message || 'Erro ao excluir usuário.');
+        await mostrarAlertaPersonalizado('Erro!', 'Erro ao excluir usuário.', 'erro');
     }
 }

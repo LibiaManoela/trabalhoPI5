@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     triagensCarregadas = await carregarTriagens();
 
     if (triagensCarregadas === null) {
-        mensagemSemTransacoes.textContent = 'Erro ao conectar com o servidor. Tente novamente mais tarde.';
+        await mostrarAlertaPersonalizado('Erro!', 'Erro ao conectar com o servidor. Tente novamente mais tarde.', 'erro');
         mensagemSemTransacoes.style.display = 'block';
         mensagemSemTransacoes.style.color = '#c62828'; // Texto em vermelho
         totalSpan.textContent = '0';
@@ -179,7 +179,7 @@ if (btnGerarPDF) {
     btnGerarPDF.addEventListener('click', async () => {
         const jsPDFClass = window.jspdf?.jsPDF || window.jsPDF || window.jspdf;
         if (!jsPDFClass) {
-            alert('Biblioteca de PDF não está carregada. Recarregue a página e tente novamente.');
+            await mostrarAlertaPersonalizado('Erro!', 'Biblioteca de PDF não está carregada. Recarregue a página e tente novamente.', 'erro');
             return;
         }
 

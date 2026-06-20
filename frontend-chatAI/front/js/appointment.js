@@ -98,6 +98,7 @@ async function validarTriagem(triagemId, aprovado, medicoId) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'x-usuario-id': medicoId
             },
             body: JSON.stringify({
                 medico_id: medicoId,
@@ -114,13 +115,13 @@ async function validarTriagem(triagemId, aprovado, medicoId) {
         }
 
         const statusMensagem = aprovado ? 'Diagnóstico aprovado com sucesso!' : 'Diagnóstico rejeitado e corrigido.';
-        alert(statusMensagem);
+        await mostrarAlertaPersonalizado('Sucesso!', statusMensagem, 'sucesso');
 
         // Recarregar a página para refletir as mudanças
         window.location.reload();
 
     } catch (error) {
         console.error('Erro ao validar triagem:', error);
-        alert('Erro: ' + error.message);
+        await mostrarAlertaPersonalizado('Erro!', 'Erro ao validar triagem.', 'erro');
     }
 }
