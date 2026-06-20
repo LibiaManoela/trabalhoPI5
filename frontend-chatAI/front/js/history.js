@@ -11,6 +11,20 @@ function formatDate(dateString) {
     });
 }
 
+// Formata o CPF para exibição legível
+function formatarCPF(cpf) {
+    if (!cpf) return '-';
+    const cpfLimpo = cpf.replace(/\D/g, ''); // Remove tudo que não for número
+    if (cpfLimpo.length !== 11) return cpf;
+    return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}
+
+// Quando for popular a tabela:
+cellCpf.textContent = formatarCPF(triagem.cpf);
+
+// Quando for popular o modal:
+document.getElementById('modalCPF').textContent = formatarCPF(triagem.cpf);
+
 // Formata o diagnóstico da IA para exibição legível
 function formatarDiagnostico(diagnosticoRaw) {
     if (!diagnosticoRaw) return 'Sem diagnóstico';
@@ -109,8 +123,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         return;
     }
 
-    if (usuarioPerfil !== 'ADMINISTRADOR') {
-        exibirAcessoNegado('Acesso negado: somente administradores podem visualizar o histórico completo de processos.');
+    if (usuarioPerfil !== 'ADMINISTRADOR' && usuarioPerfil !== 'MEDICO') {
+        exibirAcessoNegado('Acesso negado: somente administradores e médicos podem visualizar o histórico completo de processos.');
         return;
     }
 
@@ -174,18 +188,22 @@ if (btnGerarPDF) {
         doc.setTextColor(72, 82, 110);
         doc.text(`Gerado por: ${localStorage.getItem('usuarioNome') || 'Usuário'} — ${new Date().toLocaleString('pt-BR')}`, 40, 68);
 
-        const corpoTabela = document.getElementById('corpoTabelaTransacoes');
-        const linhas = corpoTabela.querySelectorAll('tr');
+        const triagens = await carregarTriagens();
         const dadosTabela = [];
 
-        linhas.forEach((linha) => {
-            const colunas = linha.querySelectorAll('td');
-            const linhaDados = Array.from(colunas).map((td) => td.textContent);
-            dadosTabela.push(linhaDados);
+        triagens.forEach((triagem) => {
+            dadosTabela.push([
+                formatDate(triagem.criado_em),
+                triagem.nome_paciente || 'Não informado',
+                triagem.cpf || '-',
+                triagem.usuario_nome || 'Não identificado',
+                triagem.status || 'PENDENTE',
+                triagem.classificacao_risco || 'Não informado' // Informação útil para o PDF!
+            ]);
         });
 
         doc.autoTable({
-            head: [['Data', 'Paciente', 'CPF', 'Profissional', 'Status Avaliação', 'Detalhes']],
+            head: [['Data', 'Paciente', 'CPF', 'Profissional', 'Status Avaliação', 'Risco']],
             body: dadosTabela,
             startY: 90,
             theme: 'striped',
