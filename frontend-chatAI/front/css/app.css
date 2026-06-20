@@ -162,11 +162,19 @@ header {
 }
 
 .header-nav a {
-    color: rgba(10, 32, 82, 0.88);
+    color: rgba(10, 32, 82, 0.85);
+    background-color: rgba(37, 150, 190, 0.05);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
 }
 
 .header-nav a:hover {
-    color: var(--blue-light);
+    color: var(--blue-dark);
+    background-color: rgba(37, 150, 190, 0.12);
+    border: 1px solid rgba(37, 150, 190, 0.18);
+    transform: translateY(-1px);
 }
 
 .header-actions {

@@ -76,17 +76,22 @@ function criarModalLogout() {
         justify-content: center;
         align-items: center;
     `;
-    
+
     const conteudo = document.createElement('div');
     conteudo.style.cssText = `
         background-color: white;
         padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        border-radius: 18px; 
+        box-shadow: 0 10px 40px rgba(10, 32, 82, 0.15); 
         max-width: 400px;
+        width: 90%; 
         text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     `;
-    
+
     conteudo.innerHTML = `
         <h2 style="margin: 0 0 15px 0; color: var(--blue-dark); font-size: 1.3rem;">Confirmar Logout</h2>
         <p style="margin: 0 0 25px 0; color: #666; font-size: 0.95rem;">
@@ -97,12 +102,12 @@ function criarModalLogout() {
             <button onclick="cancelarLogout()" class="button button-secondary" style="flex: 1;">Cancelar</button>
         </div>
     `;
-    
+
     modal.appendChild(conteudo);
     document.body.appendChild(modal);
-    
+
     // Fechar modal ao clicar fora
-    modal.addEventListener('click', function(event) {
+    modal.addEventListener('click', function (event) {
         if (event.target === modal) {
             cancelarLogout();
         }
@@ -117,7 +122,7 @@ function confirmarLogout() {
     localStorage.removeItem('usuarioPerfil');
     localStorage.removeItem('usuarioUsername');
     localStorage.removeItem('usuarioRegistro');
-    
+
     // Redirecionar para login
     window.location.href = '/html/login.html';
 }
@@ -136,8 +141,8 @@ function logout() {
 }
 
 // fechar mensagem dos cookies na HomePage
-function cookies(){
+function cookies() {
     const cookies = document.getElementById('cookies')
-    const header  = document.getElementById('header')
+    const header = document.getElementById('header')
     header.removeChild(cookies)
 }

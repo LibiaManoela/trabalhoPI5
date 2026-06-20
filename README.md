@@ -1,17 +1,32 @@
-# Projeto de Triagem Clínica com IA
+# 🏥 HCI Vitta - Triagem Clínica Inteligente
 
-Este projeto implementa um sistema de triagem clínica assistida por inteligência artificial, utilizando um backend em Node.js para gerenciar requisições e uma API em Python para processar triagens médicas baseadas em sintomas descritos pelo usuário.
+![Status do Projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-brightgreen)
+![Node.js](https://img.shields.io/badge/Node.js-18+-blue)
+![Python](https://img.shields.io/badge/Python-3.8+-yellow)
+![Docker](https://img.shields.io/badge/Docker-Integrado-2496ED?logo=docker&logoColor=white)
 
-## 🚀 QUICK START (Começo Rápido)
+Este projeto implementa um sistema de triagem clínica assistida por Inteligência Artificial para o Hospital de Clínicas de Ijuí (HCI). Ele utiliza um backend estruturado para gerenciar atendimentos e uma engine de IA em Python que analisa sintomas e recomendações baseadas no Protocolo de Manchester.
 
-### Rodar tudo em 1 comando:
+> **Nota:** Este projeto foi desenvolvido para fins educacionais. O diagnóstico preditivo gerado deve ser sempre avaliado por um profissional médico.
+
+<p align="center">
+  <img src="frontend-chatAI/front/imagens/tela_inicial.jpeg" alt="Screenshot do Sistema HCI Vitta" width="700">
+</p>
+
+---
+
+## 🚀 Quick Start (Subindo o Projeto)
+
+Graças ao Docker, você pode rodar o banco de dados, o backend e a engine de IA com apenas um comando.
+
+**1.** Certifique-se de ter o [Docker Desktop](https://www.docker.com/products/docker-desktop/) rodando e o modelo Mistral instalado localmente via Ollama (`ollama pull mistral`).
+
+**2.** No terminal, navegue até a pasta do projeto:
 ```bash
 cd "c:\Projetos Facul\trabalhoPI5"
-docker-compose up --build
-```
 
 **Aguarde ~30 segundos e acesse:**
-- 🌐 **Frontend**: http://localhost:5500/html/login.html (rodar em outro terminal: `cd frontend-chatAI/front && python -m http.server 5500`)
+- 🌐 **Frontend**: http://localhost:5500/
 - 🔌 **Backend API**: http://localhost:3000
 - 🎛️ **pgAdmin**: http://localhost:8080 (admin@pgadmin.org / 090106)
 - 🤖 **IA Engine**: http://localhost:5000
@@ -194,3 +209,16 @@ Certifique-se de que o projeto esteja na pasta `c:\Projetos Facul\trabalhoPI5` (
 - **Limpeza**: Execute `python documentos/limpeza.py` se precisar processar dados.
 
 Se houver problemas, verifique logs dos terminais ou containers.
+
+🧠 Como a Inteligência Artificial Funciona (RAG)
+Para evitar que a IA invente informações (alucinações clínicas), utilizamos a arquitetura RAG (Retrieval-Augmented Generation):
+
+O funcionário insere os dados e sintomas do paciente.
+
+O texto é transformado em embeddings (vetores numéricos) usando o modelo médico BioBERTpt-clin.
+
+Buscamos em nosso banco vetorial ChromaDB os casos históricos mais semelhantes.
+
+Aplicamos um re-ranking (filtros de palavras críticas como "dor no peito" e "falta de ar").
+
+O modelo de linguagem local (Mistral via Ollama) recebe o novo caso + os casos históricos e gera a Classificação de Risco, Justificativa e Conduta.

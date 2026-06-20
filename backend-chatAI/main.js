@@ -19,7 +19,7 @@ const pool = new Pool({
 });
 
 const ALLOWED_SEXOS = ['FEMININO', 'MASCULINO', 'OUTRO', 'PREFIRO_NAO_INFORMAR'];
-const ALLOWED_PERFIS = ['RECEPCIONISTA','ENFERMEIRO','MEDICO','ADMINISTRADOR'];
+const ALLOWED_PERFIS = ['RECEPCIONISTA', 'ENFERMEIRO', 'MEDICO', 'ADMINISTRADOR'];
 
 app.use(express.json());
 app.use(cors({ origin: '*' }));
@@ -91,6 +91,26 @@ async function requireMedicoOrAdmin(req, res, next) {
 
   if (usuario.perfil !== 'MEDICO' && usuario.perfil !== 'ADMINISTRADOR') {
     return res.status(403).json({ error: 'Acesso negado: apenas médico ou administrador.' });
+  }
+
+  req.requesterUser = usuario;
+  next();
+}
+
+async function requireEnfermeiroMedicoOrAdmin(req, res, next) {
+  const requesterId = parseRequesterUserId(req);
+  if (!requesterId) {
+    return res.status(401).json({ error: 'ID do usuário solicitante obrigatório.' });
+  }
+
+  const usuario = await getUserById(requesterId);
+  if (!usuario || !usuario.ativo) {
+    return res.status(403).json({ error: 'Usuário não encontrado ou inativo.' });
+  }
+
+  // Liberando acesso para ENFERMEIRO, MEDICO ou ADMINISTRADOR
+  if (usuario.perfil !== 'MEDICO' && usuario.perfil !== 'ADMINISTRADOR' && usuario.perfil !== 'ENFERMEIRO') {
+    return res.status(403).json({ error: 'Acesso negado: perfil não autorizado.' });
   }
 
   req.requesterUser = usuario;
@@ -202,8 +222,13 @@ app.post('/minhaIA-chat', async (req, res) => {
 
     const iaData = await iaReq.json();
     const diagnostico_ia = iaData.resposta_final || 'Erro ao gerar diagnóstico.';
-    const risco_ia = iaData.classificacao_risco || 'PENDENTE';
-    
+
+    let risco_ia = 'PENDENTE';
+    const matchRisco = diagnostico_ia.match(/vermelha|laranja|amarela|verde|azul/i);
+    if (matchRisco) {
+      risco_ia = matchRisco[0].toUpperCase();
+    }
+
     const result = await pool.query(
       `INSERT INTO triagens (usuario_id, nome_paciente, cpf, sexo_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -230,7 +255,7 @@ app.post('/minhaIA-chat', async (req, res) => {
   }
 });
 
-app.get('/triagens', requireMedicoOrAdmin, async (_req, res) => {
+app.get('/triagens', requireEnfermeiroMedicoOrAdmin, async (_req, res) => {
   try {
     const result = await pool.query(
       `SELECT t.*, u.nome AS usuario_nome, u.perfil AS usuario_perfil
@@ -320,7 +345,7 @@ app.post('/usuarios', requireAdmin, async (req, res) => {
 
   try {
     const senhaHash = bcrypt.hashSync(senha, 10);
-    
+
     const result = await pool.query(
       `INSERT INTO usuarios (nome, sexo, username, senha_hash, perfil, registro_profissional, ativo)
        VALUES ($1, $2, $3, $4, $5, $6, TRUE)

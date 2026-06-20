@@ -57,7 +57,7 @@ async function enviarMensagemDoUsuario() {
   const dadosAnamnese = mensagemInput.value.trim();
 
   if (!cpf || !nomePaciente || !idadePaciente || !sexoPaciente || !dadosAnamnese) {
-    adicionarMensagem('Por favor, preencha todos os campos antes de enviar.', 'IA', false);
+    alert('Por favor, preencha todos os campos antes de enviar.');
     // Resetar botão quando há erro de validação
     enviarBtn.textContent = 'Processar e Gerar Diagnóstico Provável';
     enviarBtn.disabled = false;
@@ -105,7 +105,7 @@ async function enviarMensagemDoUsuario() {
   } catch (error) {
     console.error('Erro:', error);
     document.getElementById(loadingId)?.remove();
-    adicionarMensagem("Desculpe, houve um erro de conexão ao processar os sintomas.", 'IA', false);
+    alert('Erro ao processar a solicitação. Por favor, tente novamente mais tarde.');
   } finally {
     // Sempre resetar o botão ao final (sucesso ou erro)
     enviarBtn.textContent = 'Processar e Gerar Diagnóstico Provável';

@@ -1,4 +1,5 @@
 const BACKEND_URL = 'http://localhost:3000';
+let triagensCarregadas = [];
 
 function formatDate(dateString) {
     const date = new Date(dateString);
@@ -18,12 +19,6 @@ function formatarCPF(cpf) {
     if (cpfLimpo.length !== 11) return cpf;
     return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 }
-
-// Quando for popular a tabela:
-cellCpf.textContent = formatarCPF(triagem.cpf);
-
-// Quando for popular o modal:
-document.getElementById('modalCPF').textContent = formatarCPF(triagem.cpf);
 
 // Formata o diagnóstico da IA para exibição legível
 function formatarDiagnostico(diagnosticoRaw) {
@@ -53,7 +48,7 @@ function formatarDiagnostico(diagnosticoRaw) {
 // Abre o modal com detalhes da triagem
 function abrirDetalhesModal(triagem) {
     document.getElementById('modalNomePaciente').textContent = triagem.nome_paciente || '-';
-    document.getElementById('modalCPF').textContent = triagem.cpf || '-';
+    document.getElementById('modalCPF').textContent = formatarCPF(triagem.cpf) || '-';
     document.getElementById('modalIdade').textContent = (triagem.idade_paciente ?? '-') + ' anos';
     document.getElementById('modalSexo').textContent = triagem.sexo_paciente || '-';
     document.getElementById('modalAnamnese').innerText = triagem.dados_anamnese || 'Não informado';
@@ -128,9 +123,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         return;
     }
 
-    const triagens = await carregarTriagens();
+    triagensCarregadas = await carregarTriagens();
 
-    if (triagens === null) {
+    if (triagensCarregadas === null) {
         mensagemSemTransacoes.textContent = 'Erro ao conectar com o servidor. Tente novamente mais tarde.';
         mensagemSemTransacoes.style.display = 'block';
         mensagemSemTransacoes.style.color = '#c62828'; // Texto em vermelho
@@ -139,7 +134,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // CHECAGEM NORMAL: Deu certo, mas o banco tá vazio
-    if (triagens.length === 0) {
+    if (triagensCarregadas.length === 0) {
         mensagemSemTransacoes.textContent = 'Nenhum registro encontrado.';
         mensagemSemTransacoes.style.display = 'block';
         mensagemSemTransacoes.style.color = 'var(--text-color)'; // Volta a cor normal
@@ -148,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     mensagemSemTransacoes.style.display = 'none';
-    triagens.forEach((triagem) => {
+    triagensCarregadas.forEach((triagem) => {
         const row = corpoTabelaTransacoes.insertRow();
 
         const cellData = row.insertCell();
@@ -158,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         cellPaciente.textContent = triagem.nome_paciente || 'Não informado';
 
         const cellCpf = row.insertCell();
-        cellCpf.textContent = triagem.cpf || '-';
+        cellCpf.textContent = formatarCPF(triagem.cpf) || '-';
 
         const cellProfissional = row.insertCell();
         cellProfissional.textContent = triagem.usuario_nome || 'Não identificado';
@@ -176,12 +171,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         cellDetalhes.appendChild(botaoDetalhes);
     });
 
-    totalSpan.textContent = triagens.length;
+    totalSpan.textContent = triagensCarregadas.length;
 });
 
 const btnGerarPDF = document.getElementById('btnGerarPDF');
 if (btnGerarPDF) {
-    btnGerarPDF.addEventListener('click', () => {
+    btnGerarPDF.addEventListener('click', async () => {
         const jsPDFClass = window.jspdf?.jsPDF || window.jsPDF || window.jspdf;
         if (!jsPDFClass) {
             alert('Biblioteca de PDF não está carregada. Recarregue a página e tente novamente.');
@@ -199,10 +194,9 @@ if (btnGerarPDF) {
         doc.setTextColor(72, 82, 110);
         doc.text(`Gerado por: ${localStorage.getItem('usuarioNome') || 'Usuário'} — ${new Date().toLocaleString('pt-BR')}`, 40, 68);
 
-        const triagens = await carregarTriagens();
         const dadosTabela = [];
 
-        triagens.forEach((triagem) => {
+        triagensCarregadas.forEach((triagem) => {
             dadosTabela.push([
                 formatDate(triagem.criado_em),
                 triagem.nome_paciente || 'Não informado',
