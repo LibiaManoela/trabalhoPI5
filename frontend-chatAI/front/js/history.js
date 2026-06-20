@@ -11,6 +11,58 @@ function formatDate(dateString) {
     });
 }
 
+// Formata o diagnóstico da IA para exibição legível
+function formatarDiagnostico(diagnosticoRaw) {
+    if (!diagnosticoRaw) return 'Sem diagnóstico';
+    
+    // Formata números ordinais (1. 2. 3.) em blocos estruturados
+    const blocos = diagnosticoRaw.split(/(?=\d+\.\s)/);
+    
+    return blocos.map(bloco => {
+        const linhas = bloco.trim().split('\n');
+        let html = '';
+        
+        linhas.forEach((linha, idx) => {
+            if (linha.match(/^\d+\./)) {
+                // Linha com número (título do bloco)
+                html += `<strong style="color: var(--blue-dark); display: block; margin-top: ${idx > 0 ? '12px' : '0'}; margin-bottom: 6px;">${linha.trim()}</strong>`;
+            } else if (linha.trim()) {
+                // Linha de conteúdo
+                html += `<span style="display: block; margin-bottom: 4px;">${linha.trim()}</span>`;
+            }
+        });
+        
+        return html;
+    }).join('');
+}
+
+// Abre o modal com detalhes da triagem
+function abrirDetalhesModal(triagem) {
+    document.getElementById('modalNomePaciente').textContent = triagem.nome_paciente || '-';
+    document.getElementById('modalCPF').textContent = triagem.cpf || '-';
+    document.getElementById('modalIdade').textContent = (triagem.idade_paciente ?? '-') + ' anos';
+    document.getElementById('modalSexo').textContent = triagem.sexo_paciente || '-';
+    document.getElementById('modalAnamnese').textContent = triagem.dados_anamnese || 'Não informado';
+    document.getElementById('modalDiagnostico').innerHTML = formatarDiagnostico(triagem.diagnostico_ia);
+    document.getElementById('modalStatus').textContent = triagem.status || 'PENDENTE';
+    document.getElementById('modalRisco').textContent = triagem.classificacao_risco || 'Não informado';
+    
+    document.getElementById('detalhesModal').style.display = 'block';
+}
+
+// Fecha o modal
+function fecharDetalhesModal() {
+    document.getElementById('detalhesModal').style.display = 'none';
+}
+
+// Fecha modal ao clicar fora
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('detalhesModal');
+    if (event.target === modal) {
+        fecharDetalhesModal();
+    }
+});
+
 async function carregarTriagens() {
     try {
         const usuarioId = localStorage.getItem('usuarioId');
@@ -91,9 +143,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         cellStatus.classList.add('status-cell');
 
         const cellDetalhes = row.insertCell();
-        cellDetalhes.innerHTML = `Idade: ${triagem.idade_paciente ?? '-'} anos<br>
-            IA: ${triagem.diagnostico_ia || 'Sem diagnóstico'}<br>
-            Risco: ${triagem.classificacao_risco || 'Não informado'}`;
+        const botaoDetalhes = document.createElement('button');
+        botaoDetalhes.className = 'button button-secondary';
+        botaoDetalhes.style.width = '100%';
+        botaoDetalhes.textContent = 'Ver Detalhes';
+        botaoDetalhes.onclick = () => abrirDetalhesModal(triagem);
+        cellDetalhes.appendChild(botaoDetalhes);
     });
 
     totalSpan.textContent = triagens.length;

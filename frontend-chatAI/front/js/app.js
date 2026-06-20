@@ -49,8 +49,68 @@ async function login() {
     }
 }
 
-// Função de logout
-function logout() {
+// Mostrar modal de confirmação de logout
+function mostrarConfirmacaoLogout() {
+    // Verificar se o modal já existe
+    let modal = document.getElementById('confirmacaoLogoutModal');
+    if (!modal) {
+        criarModalLogout();
+        modal = document.getElementById('confirmacaoLogoutModal');
+    }
+    modal.style.display = 'block';
+}
+
+// Criar modal de confirmação de logout
+function criarModalLogout() {
+    const modal = document.createElement('div');
+    modal.id = 'confirmacaoLogoutModal';
+    modal.style.cssText = `
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    `;
+    
+    const conteudo = document.createElement('div');
+    conteudo.style.cssText = `
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        text-align: center;
+    `;
+    
+    conteudo.innerHTML = `
+        <h2 style="margin: 0 0 15px 0; color: var(--blue-dark); font-size: 1.3rem;">Confirmar Logout</h2>
+        <p style="margin: 0 0 25px 0; color: #666; font-size: 0.95rem;">
+            Você realmente deseja sair da sua conta?
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="confirmarLogout()" class="button button-primary" style="flex: 1;">Sim, Sair</button>
+            <button onclick="cancelarLogout()" class="button button-secondary" style="flex: 1;">Cancelar</button>
+        </div>
+    `;
+    
+    modal.appendChild(conteudo);
+    document.body.appendChild(modal);
+    
+    // Fechar modal ao clicar fora
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            cancelarLogout();
+        }
+    });
+}
+
+// Confirmar logout e desconectar
+function confirmarLogout() {
     // Limpar localStorage
     localStorage.removeItem('usuarioId');
     localStorage.removeItem('usuarioNome');
@@ -59,7 +119,20 @@ function logout() {
     localStorage.removeItem('usuarioRegistro');
     
     // Redirecionar para login
-    window.location.href = 'login.html';
+    window.location.href = '/html/login.html';
+}
+
+// Cancelar logout
+function cancelarLogout() {
+    const modal = document.getElementById('confirmacaoLogoutModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Função de logout (compatibilidade)
+function logout() {
+    mostrarConfirmacaoLogout();
 }
 
 // fechar mensagem dos cookies na HomePage
