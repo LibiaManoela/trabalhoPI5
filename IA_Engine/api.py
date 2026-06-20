@@ -1,5 +1,6 @@
 import os
 import torch
+import psycopg2
 
 # Desativa o aviso de vulnerabilidade de carregamento de pesos
 #torch.serialization.add_safe_globals([set])
@@ -258,6 +259,61 @@ def ensure_cases_indexed(cases: List[str]):
 
 if triagem_cases:
     ensure_cases_indexed(triagem_cases)
+
+# -----------------------------
+# Sincronização com PostgreSQL (Retroalimentação)
+# -----------------------------
+def sync_approved_cases_from_db():
+    logger.info("A iniciar sincronização de casos validados pela equipa médica...")
+    try:
+        # ATENÇÃO: Ajuste o 'host' e os dados de acordo com o seu docker-compose.yml
+        # Normalmente o nome do serviço da base de dados é 'db' ou 'postgres'
+        conn = psycopg2.connect(
+            dbname=os.environ.get("POSTGRES_DB", "postgres"),
+            user=os.environ.get("POSTGRES_USER", "postgres"),
+            password=os.environ.get("POSTGRES_PASSWORD", "postgres"),
+            host=os.environ.get("POSTGRES_HOST", "db"), # Nome do contentor do banco
+            port=os.environ.get("POSTGRES_PORT", "5432")
+        )
+        cursor = conn.cursor()
+
+        # Vai buscar apenas os casos que o médico aprovou ou retificou
+        query = """
+            SELECT t.id, t.dados_anamnese, r.diagnostico_correto, r.observacoes_clinicas
+            FROM triagens t
+            JOIN retroalimentacao_medica r ON t.id = r.triagem_id
+            WHERE t.status = 'APROVADO';
+        """
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        novos_casos_para_ia = []
+        for row in rows:
+            triagem_id, anamnese, diag_correto, obs = row
+            
+            # Formata o caso como um texto de estudo para a IA
+            texto_caso = f"Sintomas relatados: {anamnese}\nDiagnóstico Correto (Validado): {diag_correto}"
+            if obs:
+                texto_caso += f"\nNota Médica: {obs}"
+                
+            novos_casos_para_ia.append(texto_caso)
+
+        cursor.close()
+        conn.close()
+
+        if novos_casos_para_ia:
+            logger.info(f"Encontrados {len(novos_casos_para_ia)} casos aprovados. A injetar no ChromaDB...")
+            # A sua função existente já garante que não há duplicados!
+            ensure_cases_indexed(novos_casos_para_ia)
+            logger.info("Sincronização concluída com sucesso.")
+        else:
+            logger.info("Nenhum caso validado encontrado na base de dados.")
+
+    except Exception as e:
+        logger.error(f"Erro ao sincronizar com a base de dados: {e}")
+
+# Executa a função assim que o ficheiro arrancar
+sync_approved_cases_from_db()
 
 # -----------------------------
 # Triage function

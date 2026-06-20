@@ -38,7 +38,7 @@ async function login() {
             localStorage.setItem('usuarioRegistro', data.usuario.registro_profissional || '');
 
             await mostrarAlertaPersonalizado('Sucesso!', "Login realizado com sucesso!", 'sucesso');
-            window.location.href = '/html/painel.html';
+            window.location.href = 'painel.html';
             return;
         }
 
@@ -124,7 +124,7 @@ function confirmarLogout() {
     localStorage.removeItem('usuarioRegistro');
 
     // Redirecionar para login
-    window.location.href = '/html/login.html';
+    window.location.href = 'login.html';
 }
 
 // Cancelar logout
