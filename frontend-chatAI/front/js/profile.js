@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // Salvar alterações
-    if (btnSalvar) {
-        btnSalvar.addEventListener('click', async function (event) {
+    if (perfilForm) {
+        perfilForm.addEventListener('submit', async function (event) {
             event.preventDefault();
 
             const senha = document.getElementById('senha').value;

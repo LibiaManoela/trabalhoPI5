@@ -49,6 +49,7 @@ function adicionarMensagem(texto, remetente, isAiResult = false) {
 async function enviarMensagemDoUsuario() {
   enviarBtn.textContent = 'Enviando...';
   enviarBtn.disabled = true;
+  
   const cpf = document.getElementById('cpf-input').value.trim();
   const nomePaciente = document.getElementById('nome-paciente-input').value.trim();
   const idadePaciente = document.getElementById('idade-paciente-input').value.trim();
@@ -57,6 +58,9 @@ async function enviarMensagemDoUsuario() {
 
   if (!cpf || !nomePaciente || !idadePaciente || !sexoPaciente || !dadosAnamnese) {
     adicionarMensagem('Por favor, preencha todos os campos antes de enviar.', 'IA', false);
+    // Resetar botão quando há erro de validação
+    enviarBtn.textContent = 'Processar e Gerar Diagnóstico Provável';
+    enviarBtn.disabled = false;
     return;
   }
 
@@ -102,38 +106,30 @@ async function enviarMensagemDoUsuario() {
     console.error('Erro:', error);
     document.getElementById(loadingId)?.remove();
     adicionarMensagem("Desculpe, houve um erro de conexão ao processar os sintomas.", 'IA', false);
+  } finally {
+    // Sempre resetar o botão ao final (sucesso ou erro)
+    enviarBtn.textContent = 'Processar e Gerar Diagnóstico Provável';
+    enviarBtn.disabled = false;
   }
-  enviarBtn.textContent = 'Enviar';
-  enviarBtn.disabled = false;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  adicionarMensagem("Olá! Insira os sintomas e os sinais vitais do paciente para realizar a triagem pelo Protocolo de Manchester.", "IA", false);
-
-  enviarBtn.addEventListener('click', enviarMensagemDoUsuario);
-  mensagemInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      enviarMensagemDoUsuario();
-    }
-  });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
+  // Mensagem inicial da IA
   adicionarMensagem("Olá! Insira os sintomas e os sinais vitais do paciente para realizar a triagem pelo Protocolo de Manchester.", "IA", false);
 
   const form = document.getElementById('triagem-form');
   
-  // Escuta o evento de submit do formulário ao invés de apenas o clique
+  // Escuta o evento de submit do formulário (mais robusto que apenas clique)
   form.addEventListener('submit', (event) => {
-    event.preventDefault(); // Evita que a tela pisque/recarregue
+    event.preventDefault(); // Evita que a tela recarregue
     enviarMensagemDoUsuario();
   });
 
+  // Permite enviar com Enter no textarea (Shift+Enter para quebra de linha)
   mensagemInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      // Enter submeta validando os campos
+      // Validar campos antes de enviar
       if(form.checkValidity()) {
          enviarMensagemDoUsuario();
       } else {
