@@ -718,3 +718,41 @@ footer small {
         gap: 0;
     }
 }
+
+/* --- MODAIS PERSONALIZADOS --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(10, 32, 82, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-caixa {
+    background-color: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(10, 32, 82, 0.15);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+/* Classes para a animação de entrada */
+.modal-visivel {
+    opacity: 1;
+}
+
+.modal-caixa-visivel {
+    transform: translateY(0);
+}
