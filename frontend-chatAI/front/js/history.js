@@ -56,7 +56,7 @@ function abrirDetalhesModal(triagem) {
     document.getElementById('modalCPF').textContent = triagem.cpf || '-';
     document.getElementById('modalIdade').textContent = (triagem.idade_paciente ?? '-') + ' anos';
     document.getElementById('modalSexo').textContent = triagem.sexo_paciente || '-';
-    document.getElementById('modalAnamnese').textContent = triagem.dados_anamnese || 'Não informado';
+    document.getElementById('modalAnamnese').innerText = triagem.dados_anamnese || 'Não informado';
     document.getElementById('modalDiagnostico').innerHTML = formatarDiagnostico(triagem.diagnostico_ia);
     document.getElementById('modalStatus').textContent = triagem.status || 'PENDENTE';
     document.getElementById('modalRisco').textContent = triagem.classificacao_risco || 'Não informado';
@@ -93,7 +93,7 @@ async function carregarTriagens() {
         return triagens;
     } catch (error) {
         console.error(error);
-        return [];
+        return null;
     }
 }
 
@@ -130,8 +130,19 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const triagens = await carregarTriagens();
 
-    if (!triagens || triagens.length === 0) {
+    if (triagens === null) {
+        mensagemSemTransacoes.textContent = 'Erro ao conectar com o servidor. Tente novamente mais tarde.';
         mensagemSemTransacoes.style.display = 'block';
+        mensagemSemTransacoes.style.color = '#c62828'; // Texto em vermelho
+        totalSpan.textContent = '0';
+        return;
+    }
+
+    // CHECAGEM NORMAL: Deu certo, mas o banco tá vazio
+    if (triagens.length === 0) {
+        mensagemSemTransacoes.textContent = 'Nenhum registro encontrado.';
+        mensagemSemTransacoes.style.display = 'block';
+        mensagemSemTransacoes.style.color = 'var(--text-color)'; // Volta a cor normal
         totalSpan.textContent = '0';
         return;
     }

@@ -202,7 +202,8 @@ app.post('/minhaIA-chat', async (req, res) => {
 
     const iaData = await iaReq.json();
     const diagnostico_ia = iaData.resposta_final || 'Erro ao gerar diagnóstico.';
-
+    const risco_ia = iaData.classificacao_risco || 'PENDENTE';
+    
     const result = await pool.query(
       `INSERT INTO triagens (usuario_id, nome_paciente, cpf, sexo_paciente, idade_paciente, dados_anamnese, diagnostico_ia, classificacao_risco)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -215,7 +216,7 @@ app.post('/minhaIA-chat', async (req, res) => {
         idade_paciente ?? null,
         message,
         diagnostico_ia,
-        'PENDENTE' // classificacao_risco
+        risco_ia // classificacao_risco
       ]
     );
 
@@ -235,7 +236,8 @@ app.get('/triagens', requireMedicoOrAdmin, async (_req, res) => {
       `SELECT t.*, u.nome AS usuario_nome, u.perfil AS usuario_perfil
        FROM triagens t
        LEFT JOIN usuarios u ON t.usuario_id = u.id
-       ORDER BY t.criado_em DESC`
+       ORDER BY t.criado_em DESC
+       LIMIT 150`
     );
 
     return res.json(result.rows);
