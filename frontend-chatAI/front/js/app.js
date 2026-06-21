@@ -136,7 +136,7 @@ function cancelarLogout() {
 }
 
 // Função de logout (compatibilidade)
-function logout() {
+window.logout = function() {
     mostrarConfirmacaoLogout();
 }
 
