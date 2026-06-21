@@ -1,237 +1,121 @@
 # 🏥 HCI Vitta - Triagem Clínica Inteligente
 
-![Status do Projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-brightgreen)
+![Status do Projeto](https://img.shields.io/badge/Status-Versão_Beta-brightgreen)
 ![Node.js](https://img.shields.io/badge/Node.js-18+-blue)
 ![Python](https://img.shields.io/badge/Python-3.8+-yellow)
 ![Docker](https://img.shields.io/badge/Docker-Integrado-2496ED?logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white)
 
-Este projeto implementa um sistema de triagem clínica assistida por Inteligência Artificial para o Hospital de Clínicas de Ijuí (HCI). Ele utiliza um backend estruturado para gerenciar atendimentos e uma engine de IA em Python que analisa sintomas e recomendações baseadas no Protocolo de Manchester.
+O **HCI Vitta** é um sistema moderno de suporte à decisão clínica projetado para o Hospital de Clínicas de Ijuí (HCI). Utilizando Inteligência Artificial Local e a arquitetura RAG (*Retrieval-Augmented Generation*), o sistema analisa sintomas, sugere condutas médicas baseadas no Protocolo de Manchester e **aprende continuamente** com o feedback dos médicos.
 
-> **Nota:** Este projeto foi desenvolvido para fins educacionais. O diagnóstico preditivo gerado deve ser sempre avaliado por um profissional médico.
+> ⚠️ **Nota Importante:** Este projeto foi desenvolvido estritamente para fins educacionais e acadêmicos. O diagnóstico preditivo gerado deve ser sempre validado por um profissional de saúde qualificado.
 
 <p align="center">
-  <img src="frontend-chatAI/front/imagens/tela_inicial.jpeg" alt="Screenshot do Sistema HCI Vitta" width="700">
+  <img src="frontend-chatAI/front/imagens/tela_inicial.jpeg" alt="Dashboard do Sistema HCI Vitta" width="800" style="border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
 </p>
 
 ---
 
-## 🚀 Quick Start (Subindo o Projeto)
+## ✨ Principais Funcionalidades (Features)
 
-Graças ao Docker, você pode rodar o banco de dados, o backend e a engine de IA com apenas um comando.
-
-**1.** Certifique-se de ter o [Docker Desktop](https://www.docker.com/products/docker-desktop/) rodando e o modelo Mistral instalado localmente via Ollama (`ollama pull mistral`).
-
-**2.** No terminal, navegue até a pasta do projeto:
-```bash
-cd "c:\Projetos Facul\trabalhoPI5"
-
-**Aguarde ~30 segundos e acesse:**
-- 🌐 **Frontend**: http://localhost:5500/
-- 🔌 **Backend API**: http://localhost:3000
-- 🎛️ **pgAdmin**: http://localhost:8080 (admin@pgadmin.org / 090106)
-- 🤖 **IA Engine**: http://localhost:5000
-
-**Para testar completo**: Veja [TESTING_GUIDE.md](TESTING_GUIDE.md) 📋
+- 🤖 **Triagem Assistida por IA**: Análise de sintomas e recomendação de classificação de risco em segundos.
+- 📚 **Motor RAG Clínico**: Busca de casos históricos no `ChromaDB` através de Embeddings (`BioBERTpt-clin`) para gerar respostas embasadas e livres de alucinações.
+- 🔄 **Aprendizado Contínuo (Active Learning)**: A IA é retroalimentada com as avaliações médicas! Triagens corrigidas e aprovadas no painel são sincronizadas com o banco vetorial, deixando a IA progressivamente mais inteligente para a realidade do hospital.
+- 🛡️ **Arquitetura Baseada em Perfis**: Níveis de acesso distintos (`RECEPCIONISTA`, `ENFERMEIRO`, `MEDICO`, `ADMINISTRADOR`) gerenciados via PostgreSQL.
 
 ---
 
-## Descrição do Projeto
+## 🛠️ Tecnologias Utilizadas
 
-O sistema permite que usuários descrevam sintomas clínicos e recebam uma triagem automatizada, incluindo classificação por protocolo de Manchester (vermelha, laranja, amarela, verde ou azul), justificativa e condutas iniciais. A IA utiliza um modelo de linguagem local (Mistral via Ollama), embeddings clínicos (BioBERTpt-clin) e um banco vetorial (ChromaDB) para recuperar casos similares históricos.
+A stack do projeto foi dividida em microsserviços orquestrados pelo **Docker Compose**:
 
-O projeto foi desenvolvido para fins educacionais e de demonstração, integrando frontend web simples, backend API e motor de IA.
+* **Frontend**: HTML5, CSS3 e JavaScript (Servido por Nginx).
+* **Backend**: Node.js com Express (APIs RESTful e divisão de rotas).
+* **IA Engine**: Python (FastAPI), LlamaIndex, Transformers e PyTorch.
+* **LLM Local**: Mistral executado via Ollama (Privacidade total dos dados do paciente).
+* **Bancos de Dados**:
+  * PostgreSQL (Relacional - Perfis, Histórico, Validações).
+  * ChromaDB (Vetorial - Casos Clínicos).
 
-## Linguagens e Ferramentas Utilizadas
+---
 
-### Linguagens
-- **JavaScript**: Para o backend Node.js e frontend (HTML/CSS/JS).
-- **Python**: Para o motor de IA e API de triagem.
+## 🚀 Como Executar o Projeto (Quick Start)
 
-### Ferramentas e Tecnologias
-- **Node.js**: Runtime para executar JavaScript no servidor.
-- **Docker**: Para containerizar o backend Node.js (usando imagem node:24-alpine).
-- **Python Virtual Environment (.venv)**: Para isolar dependências Python.
-- **Ollama**: Para executar modelos de linguagem localmente (Mistral).
-- **ChromaDB**: Banco vetorial para armazenar e consultar embeddings de casos clínicos.
-- **Streamlit**: Para a interface original de debug da IA (não usada na integração final).
-- **Git**: Controle de versão.
+Graças à conteinerização, subir toda a infraestrutura requer poucos passos.
 
-### Bibliotecas e Dependências
+### 1. Pré-requisitos
 
-#### Node.js (backend-chatAI/package.json)
-- **express**: Framework web para criar APIs REST.
-- **cors**: Middleware para permitir requisições cross-origin.
-- **dotenv**: Para carregar variáveis de ambiente.
+* Ter o [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e rodando.
+* Ter o [Ollama](https://ollama.com/) instalado na máquina local.
 
-#### Python (instaladas via pip no .venv)
-- **fastapi**: Framework para criar APIs web assíncronas.
-- **uvicorn**: Servidor ASGI para FastAPI.
-- **llama-index**: Framework para integração com LLMs e RAG (Retrieval-Augmented Generation).
-- **chromadb**: Cliente para ChromaDB.
-- **transformers**: Biblioteca para modelos de Hugging Face (usado para BioBERTpt-clin).
-- **torch**: PyTorch para operações de deep learning e GPU.
-- **streamlit**: Para interfaces web rápidas (usado no app original).
-- **nest-asyncio**: Para permitir asyncio em ambientes interativos.
-- **hashlib**: Para gerar IDs únicos (padrão do Python).
-- **re**: Para expressões regulares (padrão do Python).
-- **warnings**: Para gerenciar avisos (padrão do Python).
+Baixe o modelo LLM executando no seu terminal hospedeiro:
 
-Outros: ollama (executável externo), torch.serialization (para compatibilidade).
+```bash
+ollama pull mistral
+```
 
-## Estrutura do Projeto
+### 2. Subindo a Aplicação
+
+No terminal, navegue até a pasta raiz do projeto e utilize o Docker Compose:
+
+```bash
+# Navegue até a pasta do projeto
+cd caminho/para/o/trabalhoPI5
+
+# Construa e suba todos os serviços em segundo plano
+docker-compose up -d --build
+```
+
+### 3. Acessos aos Serviços
+
+Aguarde cerca de 30 segundos para o motor de IA carregar os tensores e o banco inicializar. O banco de dados já inicializa populado com usuários de teste e permissões graças ao script `init-db.sql`.
+
+| Serviço | URL | Credenciais de Teste |
+|---|---|---|
+| 🌐 Frontend (Sistema) | http://localhost:5500 | Usuário: `carlos.medico` / Senha: `admin123` |
+| 🔌 Backend (API Node) | http://localhost:3000 | - |
+| 🎛️ Painel DB (pgAdmin) | http://localhost:8080 | E-mail: `admin@hcivitta.com` / Senha: `admin` |
+| 🤖 Motor IA (FastAPI) | http://localhost:5000 | - |
+
+---
+
+## 🧠 Entendendo o Ciclo de Inteligência (RAG + Feedback)
+
+1. **Entrada**: O enfermeiro insere anamnese e sintomas no formulário do painel.
+2. **Vetorização**: O motor Python converte o texto em Embeddings matemáticos usando IA médica (BioBERTpt-clin).
+3. **Busca Semântica**: O ChromaDB devolve o caso histórico mais parecido do hospital.
+4. **Geração (LLM)**: O modelo Mistral recebe os sintomas + o caso similar e gera um parecer embasado (Classificação, Justificativa e Conduta).
+5. **Validação Humana**: O parecer fica como `PENDENTE`. Um médico avalia, corrige se necessário e aprova.
+6. **Evolução**: Ao iniciar, o motor Python varre o PostgreSQL, busca os novos casos validados e os injeta no ChromaDB. O ciclo recomeça, mais preciso do que antes!
+
+---
+
+## 📂 Estrutura do Projeto
 
 ```
 trabalhoPI5/
 ├── backend-chatAI/          # Backend Node.js
-│   ├── main.js             # Servidor Express com rota /chat
-│   ├── package.json        # Dependências Node.js
-│   └── package-lock.json   # Lockfile das dependências
-├── IA_Engine/              # Motor de IA em Python
-│   ├── api.py              # API FastAPI para triagem (/triagem)
-│   ├── app-bd-clin-debug.py # App Streamlit original (debug)
-│   ├── ingest_pdfs.py      # Script para ingestão de dados (não usado)
-│   └── chroma_db/          # Banco vetorial persistente
-│       ├── chroma.sqlite3
-│       └── [outras pastas]
-├── frontend-chatAI/         # Frontend web
-│   ├── html/               # Páginas HTML
-│   ├── css/                # Estilos CSS
-│   └── js/                 # Scripts JavaScript
-├── documentos/             # Dados e scripts de limpeza
-│   ├── Healthcare.csv      # Dataset de saúde
-│   ├── limpeza.py          # Script de limpeza de dados
-│   └── meus_casos.txt      # Casos simulados para triagem
-├── .venv/                  # Ambiente virtual Python
-└── README.md               # Este arquivo
+│   ├── routes/              # Módulos de Rotas (ex: triagensRoutes.js)
+│   ├── main.js              # Servidor Express principal
+│   └── Dockerfile           # Imagem Node.js
+├── IA_Engine/                # Motor de IA em Python
+│   ├── api.py                # Servidor FastAPI e Lógica RAG + Sincronização DB
+│   ├── chroma_db/             # Banco vetorial persistente
+│   ├── requirements.txt       # Dependências (FastAPI, LlamaIndex, psycopg2, etc)
+│   └── Dockerfile             # Imagem Python
+├── frontend-chatAI/          # Frontend web (Painéis, Históricos, Chat)
+│   └── front/                 # HTML, CSS, JS e Imagens
+├── docker-compose.yml        # Orquestrador dos 5 microsserviços
+├── init-db.sql               # Estrutura do Postgres, Triggers e Dados Iniciais
+└── README.md                 # Este arquivo
 ```
 
-## Como as Coisas se Conectam
+---
 
-1. **Frontend**: Interface web (HTML/JS) envia requisições POST para `http://localhost:3000/chat` com sintomas do usuário.
-2. **Backend Node.js**: Recebe a requisição, faz fetch para a API Python em `http://host.docker.internal:8000/triagem` (quando rodando em Docker) ou `http://localhost:8000/triagem` (local).
-3. **API Python**: Processa os sintomas:
-   - Gera embedding com BioBERTpt-clin.
-   - Consulta ChromaDB para casos similares.
-   - Aplica reranking híbrido (distância + termos críticos).
-   - Monta prompt para o LLM (Mistral via Ollama).
-   - Retorna resposta estruturada (classificação, justificativa, condutas).
-4. **Resposta**: Volta pelo Node.js para o frontend, exibindo a triagem.
+## 🛣️ Roadmap e Melhorias Futuras
 
-O sistema usa RAG para contextualizar respostas com casos históricos, evitando alucinações.
+O MVP atingiu sua maturidade para testes operacionais. As próximas evoluções previstas incluem:
 
-## Como Rodar o Projeto
-
-### Pré-requisitos
-- **Python 3.8+**: Para o motor de IA.
-- **Node.js 18+**: Para o backend (ou Docker).
-- **Docker**: Para containerizar o Node.js (opcional, mas recomendado).
-- **Ollama**: Instalar e baixar o modelo `mistral` (`ollama pull mistral`).
-- **Git**: Para clonar o repositório (se aplicável).
-
-### Passo 1: Clonar ou Preparar o Projeto
-Certifique-se de que o projeto esteja na pasta `c:\Projetos Facul\trabalhoPI5` (ou equivalente).
-
-### Passo 2: Configurar Ambiente Python
-1. Ativar o ambiente virtual:
-   ```
-   cd c:\Projetos Facul\trabalhoPI5
-   .venv\Scripts\Activate.ps1  # No PowerShell
-   ```
-2. Instalar dependências (se não estiverem instaladas):
-   ```
-   pip install fastapi uvicorn
-   ```
-   (Outras dependências já estão no .venv se o projeto foi configurado).
-
-### Passo 3: Rodar a API Python (Motor de IA)
-1. Navegar para a pasta IA_Engine:
-   ```
-   cd IA_Engine
-   ```
-2. Executar a API:
-   ```
-   python api.py
-   ```
-   - A API ficará rodando em `http://localhost:8000`.
-   - Carrega modelos e banco vetorial na primeira execução (pode demorar).
-
-### Passo 4: Configurar e Rodar o Backend Node.js
-#### Opção 1: Usando Docker (Recomendado)
-1. Instalar Docker Desktop.
-2. Puxar a imagem:
-   ```
-   docker pull node:24-alpine
-   ```
-3. Instalar dependências no container:
-   ```
-   docker run --rm -v "c:\Projetos Facul\trabalhoPI5:/app" -w /app/backend-chatAI node:24-alpine npm install
-   ```
-4. Rodar o servidor:
-   ```
-   docker run -d --name node-backend -v "c:\Projetos Facul\trabalhoPI5:/app" -w /app/backend-chatAI -p 3000:3000 node:24-alpine node main.js
-   ```
-   - O backend ficará em `http://localhost:3000`.
-
-#### Opção 2: Localmente (Sem Docker)
-1. Instalar Node.js.
-2. Navegar para backend-chatAI:
-   ```
-   cd backend-chatAI
-   ```
-3. Instalar dependências:
-   ```
-   npm install
-   ```
-4. Alterar `main.js`: Trocar `host.docker.internal` por `localhost` na linha do fetch.
-5. Rodar:
-   ```
-   node main.js
-   ```
-
-### Passo 5: Acessar o Frontend
-1. Abrir um navegador.
-2. Navegar para `frontend-chatAI/html/index.html` (ou qualquer página HTML).
-3. Usar a interface para enviar sintomas via JavaScript (chamando `/chat`).
-
-### Teste da Integração
-- Enviar POST para `http://localhost:3000/chat` com JSON `{"message": "sintomas aqui"}`.
-- Exemplo com PowerShell:
-  ```
-  Invoke-WebRequest -Uri http://localhost:3000/chat -Method POST -Headers @{ "Content-Type" = "application/json" } -Body '{"message":"sede excessiva e tontura"}' -UseBasicParsing
-  ```
-- Deve retornar uma resposta JSON com a triagem.
-
-### Notas Importantes
-- **GPU**: Se disponível, PyTorch usa CUDA para embeddings. Verifique com `nvidia-smi`.
-- **Ollama**: Certifique-se de que está rodando (`ollama serve`) e o modelo `mistral` está baixado.
-- **Portas**: 3000 (Node.js), 8000 (Python). Não conflitar com outros serviços.
-- **Debug**: Use o app Streamlit (`streamlit run IA_Engine/app-bd-clin-debug.py`) para testar a IA isoladamente.
-- **Limpeza**: Execute `python documentos/limpeza.py` se precisar processar dados.
-
-Se houver problemas, verifique logs dos terminais ou containers.
-
-🧠 Como a Inteligência Artificial Funciona (RAG)
-Para evitar que a IA invente informações (alucinações clínicas), utilizamos a arquitetura RAG (Retrieval-Augmented Generation):
-
-O funcionário insere os dados e sintomas do paciente.
-
-O texto é transformado em embeddings (vetores numéricos) usando o modelo médico BioBERTpt-clin.
-
-Buscamos em nosso banco vetorial ChromaDB os casos históricos mais semelhantes.
-
-Aplicamos um re-ranking (filtros de palavras críticas como "dor no peito" e "falta de ar").
-
-O modelo de linguagem local (Mistral via Ollama) recebe o novo caso + os casos históricos e gera a Classificação de Risco, Justificativa e Conduta.
-
-## 🚀 Melhorias Futuras (Roadmap)
-
-Este projeto foi construído como um MVP (Produto Mínimo Viável) escalável. Para a adoção do sistema em um ambiente hospitalar de produção real, as seguintes evoluções arquiteturais estão mapeadas:
-
-* **🔒 Segurança Avançada (JWT + HttpOnly Cookies):** Substituir o atual armazenamento de sessão via `localStorage` pela implementação de **JSON Web Tokens (JWT)** transitados através de cookies *HttpOnly*. Esta abordagem mitiga ataques de *Cross-Site Scripting (XSS)* e adequa a aplicação às normas rígidas de segurança de dados de saúde (LGPD/HIPAA).
-
-* **🧠 Aprendizado Contínuo (Active Learning) da IA:**
-  Implementar um *CRON Job* (rotina automatizada) no back-end para buscar periodicamente as triagens validadas e **aprovadas** pelos médicos no PostgreSQL, formatá-las e injetá-las automaticamente no banco de dados vetorial (`ChromaDB`). Isso criará um ciclo de retroalimentação contínuo sem intervenção humana, deixando a IA progressivamente mais inteligente baseada nos padrões do próprio hospital.
-
-* **⚡ Paginação Dinâmica de Dados:** Substituir a atual limitação bruta de busca de histórico (`LIMIT 150`) por uma estrutura robusta de paginação na API REST (via *Offset* ou *Cursor-based*). Isso garantirá que o painel administrativo funcione com altíssima performance, mesmo com dezenas de milhares de registros.
-
-* **🔔 Notificações em Tempo Real (WebSockets):** Implementar comunicação bidirecional com `Socket.io` para que, no momento em que a equipe de enfermagem registrar um quadro de **Risco Vermelho** ou **Laranja**, um alerta do tipo *Push* surja instantaneamente na tela do médico de plantão, agilizando o socorro sem a necessidade de recarregar páginas.
+- [ ] **Segurança Avançada (JWT)**: Migrar de `localStorage` para JSON Web Tokens (JWT) trafegados via cookies HttpOnly, blindando a aplicação contra ataques XSS (em conformidade com a LGPD/HIPAA).
+- [ ] **Paginação Dinâmica**: Implementar paginação avançada no SQL (Offset ou Cursor-based) para garantir alta performance no histórico conforme o volume de pacientes cresce.
+- [ ] **WebSockets (Notificações Real-Time)**: Integração com Socket.io para alertar a equipe médica imediatamente na tela quando um paciente for classificado com "Risco Vermelho".
