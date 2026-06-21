@@ -72,7 +72,7 @@ Aguarde cerca de 30 segundos para o motor de IA carregar os tensores e o banco i
 
 | Serviço | URL | Credenciais de Teste |
 |---|---|---|
-| 🌐 Frontend (Sistema) | http://localhost:5500 | Usuário: `carlos.medico` / Senha: `admin123` |
+| 🌐 Frontend (Sistema) | http://localhost:5500 | Usuário: `admin` / Senha: `admin123` |
 | 🔌 Backend (API Node) | http://localhost:3000 | - |
 | 🎛️ Painel DB (pgAdmin) | http://localhost:8080 | E-mail: `admin@hcivitta.com` / Senha: `admin` |
 | 🤖 Motor IA (FastAPI) | http://localhost:5000 | - |
