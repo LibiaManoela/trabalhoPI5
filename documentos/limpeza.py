@@ -4,16 +4,16 @@ from pathlib import Path
 
 # Carregar o dataset
 base_dir = Path(__file__).resolve().parent
-csv_path = base_dir / 'documentos' / 'Healthcare.csv'
-txt_path = base_dir / 'documentos' / 'meus_casos.txt'
+csv_path = base_dir / 'Healthcare.csv'
+txt_path = base_dir / 'meus_casos.txt'
 df = pd.read_csv(csv_path)
 
 # Filtrar apenas as doenças desejadas
-doencas_alvo = ['Diabetes', 'Hypertension', 'Thyroid Disorder']
-df_filtrado = df[df['Disease'].isin(doencas_alvo)]
+#doencas_alvo = ['Diabetes', 'Hypertension', 'Thyroid Disorder']
+#df_filtrado = df[df['Disease'].isin(doencas_alvo)]
 
 # Selecionar colunas relevantes
-df_selecionado = df_filtrado[['Patient_ID','Age','Gender','Symptoms','Symptom_Count','Disease']].copy()
+df_selecionado = df[['Patient_ID','Age','Gender','Symptoms','Symptom_Count','Disease']].copy()
 
 # Dicionário de tradução para sintomas e doenças
 traducoes = {
